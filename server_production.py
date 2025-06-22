@@ -67,7 +67,7 @@ def load_model_safe():
             return model, tokenizer, device_used
         
         print("🤖 Loading DeepSeek-R1 FP16 OpenVINO model...")
-        model_path = "models/deepseek-r1-fp16-ov/DeepSeek-R1-0528-Qwen3-8B-fp16-ov"
+        model_path = "models/deepseek-r1-int4-awq/DeepSeek-R1-0528-Qwen3-8B-int4_asym-awq-se-ov"
         
         # Check memory before loading
         has_memory, available_gb, current_gb = check_memory_availability()

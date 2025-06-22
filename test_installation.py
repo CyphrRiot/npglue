@@ -12,7 +12,7 @@ def test_model():
     print("🧪 Testing DeepSeek-R1 FP16 OpenVINO Installation")
     print("=" * 50)
     
-    model_path = "models/deepseek-r1-fp16-ov/DeepSeek-R1-0528-Qwen3-8B-fp16-ov"
+    model_path = "models/deepseek-r1-int4-awq/DeepSeek-R1-0528-Qwen3-8B-int4_asym-awq-se-ov"
     
     print("📥 Loading model and tokenizer...")
     start_time = time.time()
