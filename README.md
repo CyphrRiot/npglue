@@ -36,6 +36,7 @@ The installer will ask you to choose your model:
 - **Memory**: 2GB+ RAM (for 0.6B model) or 8GB+ RAM (for 8B model)
 - **Storage**: 10-15GB free space
 - **CPU**: Intel preferred (excellent OpenVINO optimization)
+- **Shell**: Compatible with bash, zsh, and fish
 - **Optional**: Intel NPU for potential acceleration
 
 ## 📊 **Performance Monitoring**
@@ -239,7 +240,8 @@ NPGlue provides **complete API compatibility** with both OpenAI and Ollama:
 ```
 npglue/
 ├── install                     # 🌟 Beautiful one-command installer
-├── start_server.sh             # Start the AI server
+├── start_server.sh             # Start the AI server (shell-compatible)
+├── activate_env.sh             # 🐚 Shell-specific environment activation
 ├── server_production.py        # FastAPI server with dual API compatibility
 ├── test_installation.py        # Verify installation works
 ├── diagnose_performance.py     # 🔍 Performance diagnostics tool
