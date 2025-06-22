@@ -3,12 +3,23 @@
 # Python virtual environment
 npglue-env/
 
-# Downloaded models
+# Downloaded models (too large for git)
 models/
 
-# Temporary runtime files
+# Runtime configuration (user-specific) 
 .model_config
 .original_governor
+install.log
+
+# Development and debugging files (keep repo clean)
+PROGRESS.md
+OVERVIEW.md
+*_debug.py
+*_test.py
+debug_*.py
+test_*.py
+diagnose_*.py
+check_*.py
 
 # Python cache
 __pycache__/

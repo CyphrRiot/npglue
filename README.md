@@ -22,7 +22,6 @@ The installer will ask you to choose your model:
 - **OpenVINO Optimized**: Fast inference optimized for Intel hardware
 - **20-50+ tokens/sec**: Fast local inference with memory efficiency
 - **Performance Display**: Every response shows completion time and token rate
-- **Performance Diagnostics**: Built-in tools to identify and fix performance issues
 - **Model Switching**: Easy switching between models based on your needs
 - **Direct Answers**: No more rambling - get "4" when you ask "What is 2+2"
 - **Zed Compatible**: Works as Ollama provider (no API key hassles!)
@@ -76,19 +75,6 @@ This helps you:
 
 NPGlue includes built-in tools to diagnose and optimize performance:
 
-### **Performance Diagnostics**
-
-```bash
-python diagnose_performance.py
-```
-
-This tool checks:
-
-- CPU governor and frequency settings
-- Memory usage and swap status
-- Model configuration and size
-- Top resource-consuming processes
-- OpenVINO setup and optimization
 
 ### **Model Switching**
 
@@ -214,7 +200,6 @@ curl http://localhost:11434/api/tags
 curl http://localhost:11434/v1/models
 
 # Run full model test
-python test_installation.py
 ```
 
 ## 🔌 **API Endpoints**
@@ -255,17 +240,14 @@ NPGlue provides **complete API compatibility** with both OpenAI and Ollama:
 npglue/
 ├── install                     # 🌟 Beautiful one-command installer
 ├── start_server.sh             # Start the AI server (auto CPU cleanup on exit)
-├── activate_env.sh             # 🐚 Shell-specific environment activation
 ├── server_production.py        # FastAPI server with dual API compatibility
-├── test_installation.py        # Verify installation works
-├── diagnose_performance.py     # 🔍 Performance diagnostics tool
-├── switch_model.sh             # 🔄 Easy model switching utility
 ├── boost_cpu.sh               # CPU performance optimization
 ├── restore_cpu.sh             # 🔄 Restore CPU to power-saving mode
+├── switch_model.sh             # 🔄 Easy model switching utility
 ├── goose_config_example.yaml  # Safe Goose configuration template
 ├── README.md                  # This documentation
-├── npglue-env/                # Python environment (created)
-├── models/                    # Downloaded models
+├── LICENSE                    # License file
+└── models/                    # Downloaded models (created by installer)
     ├── qwen3-8b-int8/         # High quality model (8GB)
     └── qwen3-0.6b-fp16/       # Fast model (1-2GB)
 ```
@@ -304,7 +286,6 @@ python -c "import openvino; print(openvino.Core().available_devices)"
 ## 🚀 **Recent Improvements**
 
 - ✅ **Complete Ollama API**: Added `/api/show`, `/api/version`, `/api/pull` endpoints (no more 404s!)
-- ✅ **Performance Diagnostics**: Built-in tool to identify memory/CPU issues (`diagnose_performance.py`)
 - ✅ **Model Switching**: Easy utility to switch between 8B and 0.6B models (`switch_model.sh`)
 - ✅ **Memory Optimization**: Automatic detection and fixes for memory pressure issues
 - ✅ **Flexible Token Limits**: Respects user preferences up to 4096 tokens (no more artificial caps!)
