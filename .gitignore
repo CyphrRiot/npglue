@@ -1,10 +1,14 @@
 # NPGlue - Generated files and directories to ignore
 
 # Python virtual environment
-openvino-env/
+npglue-env/
 
 # Downloaded models
 models/
+
+# Temporary runtime files
+.model_config
+.original_governor
 
 # Python cache
 __pycache__/
