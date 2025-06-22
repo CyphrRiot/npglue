@@ -181,6 +181,30 @@ async def chat_completions(request: dict):
         # Load model if needed
         model, tokenizer, device = load_model_safe()
         
+        # Use proper Qwen3 chat formatting
+        chat_messages = [{"role": "user", "content": user_message}]
+        
+        # Apply chat template with thinking disabled for direct responses
+        formatted_text = tokenizer.apply_chat_template(
+            chat_messages,
+            tokenize=False,
+            add_generation_prompt=True,
+            enable_thinking=False  # Disable thinking mode for direct answers
+        )
+        
+        # Limit max tokens to prevent memory issues
+        max_tokens = min(max_tokens, 200)
+        
+        # Tokenize input
+        inputs = tokenizer(
+            formatted_text,
+            return_tensors="pt",
+            padding=False,
+            truncation=True,
+            max_length=1024
+        )
+        input_length = inputs.input_ids.shape[1]  # Get input token length
+        
         # Check memory before generation
         has_memory, available_gb, current_gb = check_memory_availability()
         if not has_memory:
@@ -188,19 +212,6 @@ async def chat_completions(request: dict):
                 status_code=503,
                 detail=f"Insufficient memory for generation. Available: {available_gb:.1f}GB"
             )
-        
-        # Limit max tokens to prevent memory issues
-        max_tokens = min(max_tokens, 200)
-        
-        # Tokenize input
-        inputs = tokenizer(
-            user_message,
-            return_tensors="pt",
-            padding=False,
-            truncation=True,
-            max_length=1024
-        )
-        input_length = inputs.input_ids.shape[1]  # Get input token length
         
         # Generate
         generation_start = time.time()
@@ -506,9 +517,19 @@ async def ollama_chat(request: dict):
         # Load model if needed
         model, tokenizer, device = load_model_safe()
         
-        # Simple direct prompting - Qwen3 should handle this well
+        # Use proper Qwen3 chat formatting
+        messages = [{"role": "user", "content": user_message}]
+        
+        # Apply chat template with thinking disabled for direct responses
+        formatted_text = tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True,
+            enable_thinking=False  # Disable thinking mode for direct answers
+        )
+        
         # Generate response with strict memory limits
-        inputs = tokenizer(user_message, return_tensors="pt", truncation=True, max_length=512)
+        inputs = tokenizer(formatted_text, return_tensors="pt", truncation=True, max_length=512)
         input_length = inputs.input_ids.shape[1]  # Get input token length
         
         # Check memory before generation (be more reasonable)  
