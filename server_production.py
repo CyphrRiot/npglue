@@ -200,6 +200,7 @@ async def chat_completions(request: dict):
             truncation=True,
             max_length=1024
         )
+        input_length = inputs.input_ids.shape[1]  # Get input token length
         
         # Generate
         generation_start = time.time()
@@ -216,9 +217,9 @@ async def chat_completions(request: dict):
         )
         generation_time = time.time() - generation_start
         
-        # Decode response
-        full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        generated_text = full_response[len(user_message):].strip()
+        # Properly extract only the generated tokens
+        generated_tokens = outputs[0][input_length:]
+        generated_text = tokenizer.decode(generated_tokens, skip_special_tokens=True).strip()
         
         # Cleanup
         del outputs, inputs
@@ -279,6 +280,7 @@ async def generate_text(request: GenerateRequest):
             truncation=True,
             max_length=1024  # Limit context length
         )
+        input_length = inputs.input_ids.shape[1]  # Get input token length
         
         # Generate with safe parameters
         generation_start = time.time()
@@ -299,9 +301,9 @@ async def generate_text(request: GenerateRequest):
         )
         generation_time = time.time() - generation_start
         
-        # Decode response
-        full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        generated_text = full_response[len(request.prompt):].strip()
+        # Properly extract only the generated tokens
+        generated_tokens = outputs[0][input_length:]
+        generated_text = tokenizer.decode(generated_tokens, skip_special_tokens=True).strip()
         
         # Calculate metrics
         word_count = len(generated_text.split())
@@ -429,6 +431,7 @@ async def ollama_generate(request: dict):
         
         # Generate with strict memory limits
         inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=512)
+        input_length = inputs.input_ids.shape[1]  # Get input token length
         
         # Check memory before generation (be more reasonable)
         has_memory, available_gb, current_gb = check_memory_availability()
@@ -448,8 +451,9 @@ async def ollama_generate(request: dict):
             num_beams=1
         )
         
-        full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        generated_text = full_response[len(prompt):].strip()
+        # Properly extract only the generated tokens
+        generated_tokens = outputs[0][input_length:]
+        generated_text = tokenizer.decode(generated_tokens, skip_special_tokens=True).strip()
         
         # Cleanup
         del outputs, inputs
@@ -505,6 +509,7 @@ async def ollama_chat(request: dict):
         # Simple direct prompting - Qwen3 should handle this well
         # Generate response with strict memory limits
         inputs = tokenizer(user_message, return_tensors="pt", truncation=True, max_length=512)
+        input_length = inputs.input_ids.shape[1]  # Get input token length
         
         # Check memory before generation (be more reasonable)  
         has_memory, available_gb, current_gb = check_memory_availability()
@@ -525,8 +530,9 @@ async def ollama_chat(request: dict):
             num_beams=1,
         )
         
-        full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        generated_text = full_response[len(user_message):].strip()
+        # Properly extract only the generated tokens
+        generated_tokens = outputs[0][input_length:]
+        generated_text = tokenizer.decode(generated_tokens, skip_special_tokens=True).strip()
         
         # Cleanup
         del outputs, inputs
