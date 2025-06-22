@@ -504,11 +504,12 @@ async def ollama_chat(request: dict):
         
         outputs = model.generate(
             **inputs,
-            max_new_tokens=100,  # Bring back reasonable length
+            max_new_tokens=30,  # Much shorter responses to prevent rambling
             do_sample=True,
-            temperature=0.7,
+            temperature=0.3,    # Lower temperature for more focused responses
             pad_token_id=tokenizer.eos_token_id,
-            use_cache=True,  # Re-enable cache for better performance
+            eos_token_id=tokenizer.eos_token_id,
+            use_cache=True,
             num_beams=1,
         )
         
