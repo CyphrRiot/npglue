@@ -523,6 +523,81 @@ async def ollama_generate(request: dict):
         print(f"❌ Generation error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/version")
+async def ollama_version():
+    """Ollama-compatible version endpoint"""
+    return {"version": "0.1.0"}
+
+@app.post("/api/pull")
+async def ollama_pull(request: dict):
+    """Ollama-compatible pull endpoint (not supported, but won't 404)"""
+    model_name = request.get("name", "unknown")
+    print(f"🔍 DEBUG: /api/pull called for model: {model_name}")
+    return {"status": "success", "message": f"Model {model_name} already available locally"}
+
+@app.post("/api/show")
+async def ollama_show_model(request: dict):
+    """Ollama-compatible model show endpoint"""
+    try:
+        model_name = request.get("name", "qwen3")
+        print(f"🔍 DEBUG: /api/show called for model: {model_name}")
+        
+        # Read current model config
+        try:
+            with open('.model_config', 'r') as f:
+                config = f.read().strip()
+                model_path = config.split('=')[1]
+        except FileNotFoundError:
+            model_path = "models/qwen3-8b-int8"
+        
+        # Return model details in Ollama format
+        if "0.6b" in model_path.lower():
+            model_info = {
+                "license": "Apache 2.0",
+                "modelfile": "# Qwen3-0.6B-FP16 OpenVINO optimized model\nFROM qwen3-0.6b-fp16",
+                "parameters": "num_ctx 2048\ntemperature 0.7",
+                "template": "{{ .Prompt }}",
+                "details": {
+                    "format": "openvino",
+                    "family": "qwen",
+                    "families": ["qwen"],
+                    "parameter_size": "0.6B", 
+                    "quantization_level": "FP16"
+                },
+                "model_info": {
+                    "general.architecture": "qwen3",
+                    "general.file_type": 1,
+                    "general.parameter_count": 600000000,
+                    "general.quantization_version": 2
+                }
+            }
+        else:
+            model_info = {
+                "license": "Apache 2.0", 
+                "modelfile": "# Qwen3-8B-INT8 OpenVINO optimized model\nFROM qwen3-8b-int8",
+                "parameters": "num_ctx 2048\ntemperature 0.7",
+                "template": "{{ .Prompt }}",
+                "details": {
+                    "format": "openvino",
+                    "family": "qwen",
+                    "families": ["qwen"],
+                    "parameter_size": "8B",
+                    "quantization_level": "INT8"
+                },
+                "model_info": {
+                    "general.architecture": "qwen3", 
+                    "general.file_type": 1,
+                    "general.parameter_count": 8000000000,
+                    "general.quantization_version": 2
+                }
+            }
+            
+        return model_info
+        
+    except Exception as e:
+        print(f"❌ Model show error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/chat")
 async def ollama_chat(request: dict):
     """Ollama-compatible chat endpoint for Zed"""
