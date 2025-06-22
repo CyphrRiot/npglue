@@ -37,8 +37,8 @@ class GenerateResponse(BaseModel):
     words_per_sec: float
 
 app = FastAPI(
-    title="NPGlue - DeepSeek-R1 OpenVINO Server",
-    description="Local AI development assistant with memory safety",
+    title="NPGlue - Qwen3-8B OpenVINO Server",
+    description="Local AI development assistant with Qwen3-8B for direct answers",
     version="1.0.0"
 )
 
@@ -52,8 +52,8 @@ def check_memory_availability():
     available_gb = psutil.virtual_memory().available / (1024**3)
     current_usage_gb = get_memory_usage()
     
-    # Need at least 2GB free after current usage
-    return available_gb > 2.0, available_gb, current_usage_gb
+    # Need at least 0.8GB free after current usage for generation
+    return available_gb > 0.8, available_gb, current_usage_gb
 
 def load_model_safe():
     """Load model with memory monitoring and error handling"""
@@ -66,8 +66,19 @@ def load_model_safe():
         if model is not None:  # Double-check pattern
             return model, tokenizer, device_used
         
-        print("🤖 Loading DeepSeek-R1 INT4-AWQ OpenVINO model...")
-        model_path = "models/deepseek-r1-int4-awq/DeepSeek-R1-0528-Qwen3-8B-int4_asym-awq-se-ov"
+        # Read model path from config file
+        try:
+            with open('.model_config', 'r') as f:
+                config = f.read().strip()
+                model_path = config.split('=')[1]
+            print(f"🤖 Loading {model_path.split('/')[-1]} OpenVINO model...")
+        except FileNotFoundError:
+            # Fallback to default
+            model_path = "models/qwen3-8b-int8"
+            print("🤖 Loading Qwen3-8B INT8 OpenVINO model...")
+        except Exception:
+            model_path = "models/qwen3-8b-int8"
+            print("🤖 Loading Qwen3-8B INT8 OpenVINO model...")
         
         # Check memory before loading
         has_memory, available_gb, current_gb = check_memory_availability()
@@ -421,10 +432,10 @@ async def ollama_generate(request: dict):
         
         # Check memory before generation (be more reasonable)
         has_memory, available_gb, current_gb = check_memory_availability()
-        if available_gb < 1.5:  # Only need 1.5GB free
+        if available_gb < 0.8:  # Only need 800MB free
             raise HTTPException(
                 status_code=503,
-                detail=f"Insufficient memory for generation. Need 1.5GB+, have {available_gb:.1f}GB"
+                detail=f"Insufficient memory for generation. Need 0.8GB+, have {available_gb:.1f}GB"
             )
         
         outputs = model.generate(
@@ -491,22 +502,23 @@ async def ollama_chat(request: dict):
         # Load model if needed
         model, tokenizer, device = load_model_safe()
         
+        # Simple direct prompting - Qwen3 should handle this well
         # Generate response with strict memory limits
-        inputs = tokenizer(user_message, return_tensors="pt", truncation=True, max_length=512)  # Shorter context
+        inputs = tokenizer(user_message, return_tensors="pt", truncation=True, max_length=512)
         
         # Check memory before generation (be more reasonable)  
         has_memory, available_gb, current_gb = check_memory_availability()
-        if available_gb < 1.5:  # Only need 1.5GB free
+        if available_gb < 0.8:  # Only need 800MB free for generation
             raise HTTPException(
                 status_code=503,
-                detail=f"Insufficient memory for generation. Need 1.5GB+, have {available_gb:.1f}GB"
+                detail=f"Insufficient memory for generation. Need 0.8GB+, have {available_gb:.1f}GB"
             )
         
         outputs = model.generate(
             **inputs,
-            max_new_tokens=30,  # Much shorter responses to prevent rambling
+            max_new_tokens=50,  # Reasonable length for answers
             do_sample=True,
-            temperature=0.3,    # Lower temperature for more focused responses
+            temperature=0.7,    # Normal temperature for natural responses
             pad_token_id=tokenizer.eos_token_id,
             eos_token_id=tokenizer.eos_token_id,
             use_cache=True,
@@ -554,7 +566,7 @@ async def unload_model():
 if __name__ == "__main__":
     import sys
     
-    print("🚀 Starting NPGlue - DeepSeek-R1 OpenVINO Server")
+    print("🚀 Starting NPGlue - Qwen3-8B OpenVINO Server")
     print("=" * 50)
     
     # System info

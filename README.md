@@ -1,6 +1,6 @@
 # NPGlue - Intel NPU Glue for AI
 
-**NPGlue** provides a complete setup for running **DeepSeek-R1** locally using OpenVINO for AI-assisted coding and development.
+**NPGlue** provides a complete setup for running **Qwen3** models locally using OpenVINO for AI-assisted coding and development with **direct, quality answers**.
 
 ## 🚀 **Quick Start**
 
@@ -10,14 +10,17 @@ cd npglue
 ./install
 ```
 
-That's it! The beautiful installer does everything and gives you clear, safe instructions for Goose and Zed.
+The installer will ask you to choose your model:
+- **Qwen3-8B-INT8** (~6-8GB) - Best quality for complex tasks
+- **Qwen3-0.6B-FP16** (~1-2GB) - Fast and lightweight
 
 ## ✅ **What You Get**
 
-- **DeepSeek-R1**: Superior reasoning AI model with advanced thinking capabilities
-- **INT4-AWQ Optimized**: Advanced quantization preserving 95%+ quality at half the size
-- **20-30+ tokens/sec**: Fast local inference with reduced RAM usage
-- **Memory Efficient**: ~6-8GB RAM usage (vs 10-12GB FP16)
+- **Qwen3 Models**: Purpose-built for direct Q&A and coding assistance
+- **Model Choice**: Pick 8B for quality or 0.6B for speed
+- **OpenVINO Optimized**: Fast inference optimized for Intel hardware
+- **20-50+ tokens/sec**: Fast local inference with memory efficiency
+- **Direct Answers**: No more rambling - get "4" when you ask "What is 2+2"
 - **Zed Compatible**: Works as Ollama provider (no API key hassles!)
 - **Dual API Support**: Both OpenAI and Ollama compatible endpoints
 - **Goose Ready**: Drop-in replacement for OpenAI API
@@ -25,20 +28,17 @@ That's it! The beautiful installer does everything and gives you clear, safe ins
 ## 🔧 **Requirements**
 
 - **OS**: Linux (Arch/CachyOS recommended)  
-- **Memory**: 8GB+ RAM (12GB+ recommended for best performance)
-- **Storage**: 15GB free space
-- **CPU**: Intel preferred (Core Ultra series optimal)
+- **Memory**: 2GB+ RAM (for 0.6B model) or 8GB+ RAM (for 8B model)
+- **Storage**: 10-15GB free space  
+- **CPU**: Intel preferred (excellent OpenVINO optimization)
 - **Optional**: Intel NPU for potential acceleration
 
 ## 📊 **Performance Expectations**
 
-| Metric | INT4-AWQ | Previous FP16 |
-|--------|----------|---------------|
-| **Speed** | 20-30+ tok/s | 15-25 tok/s |
-| **Memory** | ~6-8GB | ~10-12GB |
-| **Model Size** | ~5.6GB | ~8GB |
-| **Quality** | 95%+ preserved | 100% baseline |
-| **Latency** | <1s first token | <1s first token |
+| Model | Size | Memory | Speed | Quality | Best For |
+|-------|------|---------|-------|---------|-----------|
+| **Qwen3-8B-INT8** | ~6-8GB | 8GB+ RAM | 20-30 tok/s | Excellent | Complex coding, detailed explanations |
+| **Qwen3-0.6B-FP16** | ~1-2GB | 2GB+ RAM | 40-60 tok/s | Good | Quick answers, simple tasks |
 
 ## 🛠️ **What the Installer Does**
 
@@ -46,10 +46,11 @@ That's it! The beautiful installer does everything and gives you clear, safe ins
 - ✅ Checks system requirements (RAM, disk space)
 - ✅ Installs system dependencies (Python, OpenVINO drivers, etc.)
 - ✅ Creates clean Python virtual environment
-- ✅ Installs AI packages (OpenVINO 2024.x, transformers, etc.)
+- ✅ Installs **CPU-only** AI packages (OpenVINO 2024.x, transformers, PyTorch-CPU)
 
 ### **Model Setup:**
-- ✅ Downloads optimized DeepSeek-R1 INT4-AWQ model (~5.6GB)
+- ✅ **Interactive model choice**: Pick Qwen3-8B-INT8 or Qwen3-0.6B-FP16
+- ✅ Downloads your chosen optimized OpenVINO model
 - ✅ Memory-safe verification (no crashes during setup)
 - ✅ CPU performance optimization
 
@@ -71,7 +72,7 @@ cp goose_config_example.yaml ~/.config/goose/config.yaml
 **If you HAVE existing Goose config, just add:**
 ```yaml
 provider: openai
-model: deepseek-r1-openvino  
+model: qwen3-openvino  
 api_base: http://localhost:8000/v1
 api_key: local-key
 ```
@@ -87,8 +88,8 @@ api_key: local-key
       "api_url": "http://localhost:8000",
       "available_models": [
         {
-          "name": "deepseek-r1-openvino",
-          "display_name": "DeepSeek-R1 Local",
+          "name": "qwen3-openvino",
+          "display_name": "Qwen3 Local",
           "max_tokens": 32768,
           "supports_tools": true
         }
@@ -98,7 +99,7 @@ api_key: local-key
   "agent": {
     "default_model": {
       "provider": "ollama",
-      "model": "deepseek-r1-openvino"
+      "model": "qwen3-openvino"
     }
   }
 }
@@ -160,17 +161,20 @@ npglue/
 ├── boost_cpu.sh               # CPU performance optimization
 ├── goose_config_example.yaml  # Safe Goose configuration template
 ├── README.md                  # This documentation
-├── openvino-env/              # Python environment (created)
-└── models/                    # INT4-AWQ model (downloaded)
-    └── deepseek-r1-int4-awq/
+├── npglue-env/               # Python environment (created)
+├── models/                    # Your chosen model (downloaded)
+    ├── qwen3-8b-int8/         # OR
+    └── qwen3-0.6b-fp16/       # Depending on your choice
 ```
 
 ## 🎯 **Why Choose NPGlue?**
 
 - **One Command Setup**: `./install` does everything beautifully
+- **Model Choice**: Choose between quality (8B) or speed (0.6B)
 - **Memory Safe**: Won't crash during installation or use
 - **Configuration Safe**: Won't overwrite your existing tool settings  
-- **Professional Quality**: Uses expert-optimized INT4-AWQ models
+- **Expert Optimized**: Uses official OpenVINO optimized models
+- **Direct Answers**: No rambling - designed for practical Q&A
 - **Clear Instructions**: Tells you exactly what to do next
 - **Local Privacy**: No data sent to external APIs
 - **Fast Performance**: Optimized for Intel hardware
@@ -186,7 +190,7 @@ npglue/
 ### **Environment Control:**
 ```bash
 # Activate environment manually
-source openvino-env/bin/activate
+source npglue-env/bin/activate
 
 # Check available devices
 python -c "import openvino; print(openvino.Core().available_devices)"
@@ -194,16 +198,18 @@ python -c "import openvino; print(openvino.Core().available_devices)"
 
 ## 🚀 **Recent Improvements**
 
+- ✅ **Model Choice Menu**: Pick Qwen3-8B-INT8 OR Qwen3-0.6B-FP16 during install
+- ✅ **Switched from DeepSeek-R1**: No more rambling - direct answers now!  
+- ✅ **CPU-Only Install**: No NVIDIA dependencies on Intel systems
 - ✅ **Dual API Support**: Both OpenAI AND Ollama compatible endpoints
 - ✅ **Zed Integration Fixed**: Works as Ollama provider (no API key issues!)  
-- ✅ **Switched to INT4-AWQ**: Better speed/memory with 95%+ quality
 - ✅ **Safe configuration**: Protects existing Goose/Zed settings
 - ✅ **Simplified installer**: One beautiful command does everything  
-- ✅ **Memory optimized**: 8GB+ requirement (down from 12GB+)
-- ✅ **Professional model**: Expert-converted OpenVINO optimization
+- ✅ **Flexible memory**: 2GB+ (0.6B) or 8GB+ (8B) requirements
+- ✅ **Expert models**: Official OpenVINO optimized versions
 
 ---
 
 **NPGlue: One command to local AI coding bliss!** 🚀
 
-*Get the power of DeepSeek-R1's advanced reasoning running locally on your machine in minutes.*
+*Get the power of Qwen3's direct, practical responses running locally on your machine in minutes.*

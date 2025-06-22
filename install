@@ -15,7 +15,7 @@ NC='\033[0m'
 clear
 echo -e "${BLUE}╭─────────────────────────────────────────────╮${NC}"
 echo -e "${BLUE}│             🚀 NPGlue Installer             │${NC}"
-echo -e "${BLUE}│      DeepSeek-R1 + OpenVINO + Goose        │${NC}"
+echo -e "${BLUE}│      DeepSeek-R1 + OpenVINO + Goose         │${NC}"
 echo -e "${BLUE}╰─────────────────────────────────────────────╯${NC}"
 echo
 echo -e "${CYAN}This will install everything you need for local AI coding assistance${NC}"
@@ -44,38 +44,84 @@ echo -e "${GREEN}✅ System packages installed${NC}"
 
 # Create clean Python environment
 echo -e "\n${BLUE}🐍 Setting up Python environment...${NC}"
-[ -d "openvino-env" ] && rm -rf openvino-env
-python -m venv openvino-env
-source openvino-env/bin/activate
+[ -d "npglue-env" ] && rm -rf npglue-env
+python -m venv npglue-env
+source npglue-env/bin/activate
 pip install --upgrade pip wheel
 
 # Install AI packages
-echo -e "${BLUE}🤖 Installing AI packages...${NC}"
-pip install "openvino>=2024.0.0" "openvino-tokenizers>=2024.0.0" optimum-intel transformers
-pip install torch --index-url https://download.pytorch.org/whl/cpu
-pip install fastapi uvicorn psutil huggingface-hub
-echo -e "${GREEN}✅ AI packages installed${NC}"
+echo -e "${BLUE}🤖 Installing AI packages (CPU-only, strict)...${NC}"
+# 1. Install PyTorch CPU-only FIRST to establish preference
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+# 2. Install OpenVINO (Intel optimized, no CUDA)
+pip install "openvino>=2024.0.0" "openvino-tokenizers>=2024.0.0"
+# 3. Install base packages that should be safe
+pip install fastapi uvicorn psutil huggingface-hub requests numpy packaging setuptools wheel
+# 4. Install transformers carefully (check if it tries to pull CUDA)
+echo -e "${CYAN}Installing transformers (watching for CUDA dependencies)...${NC}"
+pip install transformers --no-deps
+pip install tokenizers safetensors regex pyyaml tqdm
+# 5. Install optimum packages
+echo -e "${CYAN}Installing optimum-intel...${NC}"
+pip install optimum --no-deps  
+pip install optimum-intel --no-deps
+echo -e "${GREEN}✅ AI packages installed (CPU-only)${NC}"
 
 # Download model (safe, no loading)
-echo -e "\n${BLUE}📥 Downloading DeepSeek-R1 model...${NC}"
+echo -e "\n${BLUE}📥 Selecting Qwen3 model...${NC}"
+echo -e "${CYAN}Choose your Qwen3 model variant:${NC}"
+echo
+echo -e "${YELLOW}1) Qwen3-8B-INT8${NC}   - Best quality, ~6-8GB, slower"
+echo -e "${YELLOW}2) Qwen3-0.6B-FP16${NC} - Faster, ~1-2GB, good for simple tasks"
+echo
+while true; do
+    read -p "Enter your choice (1 or 2): " choice
+    case $choice in
+        1)
+            MODEL_REPO="OpenVINO/Qwen3-8B-int8-ov"
+            MODEL_DIR="models/qwen3-8b-int8"
+            MODEL_FILE="$MODEL_DIR/openvino_model.bin"
+            MODEL_NAME="Qwen3-8B-INT8"
+            MODEL_SIZE="~6-8GB"
+            MODEL_DESC="Best quality for complex tasks"
+            break
+            ;;
+        2)
+            MODEL_REPO="OpenVINO/Qwen3-0.6B-fp16-ov"
+            MODEL_DIR="models/qwen3-0.6b-fp16"
+            MODEL_FILE="$MODEL_DIR/openvino_model.bin"
+            MODEL_NAME="Qwen3-0.6B-FP16"
+            MODEL_SIZE="~1-2GB"
+            MODEL_DESC="Fast and lightweight"
+            break
+            ;;
+        *)
+            echo -e "${RED}Please enter 1 or 2${NC}"
+            ;;
+    esac
+done
+
 mkdir -p models
-if [ -f "models/deepseek-r1-int4-awq/DeepSeek-R1-0528-Qwen3-8B-int4_asym-awq-se-ov/openvino_model.bin" ]; then
-    echo -e "${GREEN}✅ Model already downloaded${NC}"
+if [ -f "$MODEL_FILE" ]; then
+    echo -e "${GREEN}✅ $MODEL_NAME already downloaded${NC}"
 else
-    echo -e "${CYAN}Downloading optimized INT4-AWQ OpenVINO model...${NC}"
-    echo -e "${PURPLE}Using INT4-AWQ: 95%+ quality, faster speed, less RAM${NC}"
+    echo -e "${CYAN}Downloading $MODEL_NAME OpenVINO model...${NC}"
+    echo -e "${PURPLE}$MODEL_DESC - $MODEL_SIZE${NC}"
     python -c "
 from huggingface_hub import snapshot_download
 snapshot_download(
-    repo_id='Echo9Zulu/DeepSeek-R1-0528-Qwen3-8B-OpenVINO',
-    allow_patterns=['DeepSeek-R1-0528-Qwen3-8B-int4_asym-awq-se-ov/*'],
-    local_dir='models/deepseek-r1-int4-awq',
+    repo_id='$MODEL_REPO',
+    local_dir='$MODEL_DIR',
     local_dir_use_symlinks=False
 )
-print('✅ INT4-AWQ model downloaded successfully')
-print('🚀 Faster inference with preserved reasoning capability!')
+print('✅ $MODEL_NAME downloaded successfully')
+print('🚀 Much better for direct Q&A than DeepSeek-R1!')
+print('💾 Size: $MODEL_SIZE')
 "
 fi
+
+# Save model choice for server
+echo "MODEL_PATH=$MODEL_DIR" > .model_config
 
 # Memory-safe verification (no model loading)
 echo -e "\n${BLUE}🧪 Verifying installation...${NC}"
@@ -92,7 +138,7 @@ print('✅ All packages working correctly')
 cat > start_server.sh << 'EOF'
 #!/bin/bash
 cd "$(dirname "$0")"
-source openvino-env/bin/activate
+source npglue-env/bin/activate
 python server_production.py
 EOF
 chmod +x start_server.sh
@@ -161,7 +207,7 @@ echo -e "   • Quality: ${GREEN}95%+ of FP16 capability${NC}"
 echo
 echo -e "${BLUE}💡 Tips:${NC}"
 echo -e "   • First generation is slower (warmup)"
-echo -e "   • Use 'source openvino-env/bin/activate' to activate environment"
+echo -e "   • Use 'source npglue-env/bin/activate' to activate environment"
 echo -e "   • Server runs on http://localhost:8000"
 echo
 echo -e "${GREEN}✨ Happy coding with your local AI assistant! ✨${NC}"
