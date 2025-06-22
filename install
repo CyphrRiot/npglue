@@ -248,13 +248,13 @@ echo -e "   ${CYAN}curl http://localhost:11434/health${NC}"
 echo
 echo -e "${GREEN}📊 Performance expectations:${NC}"
 if [ "$HAS_INTEL_NPU" = true ]; then
-    echo -e "   • Speed: ${GREEN}30-70+ tokens/sec${NC} (NPU accelerated)"
+    echo -e "   • Speed: ${GREEN}15-25 tokens/sec${NC} (NPU accelerated)"
     echo -e "   • Hardware: ${GREEN}Intel NPU + OpenVINO optimized${NC}"
 elif [ "$HAS_INTEL_GPU" = true ]; then
-    echo -e "   • Speed: ${GREEN}20-50+ tokens/sec${NC} (Intel GPU accelerated)"
+    echo -e "   • Speed: ${GREEN}10-20 tokens/sec${NC} (Intel GPU accelerated)"
     echo -e "   • Hardware: ${GREEN}Intel iGPU + OpenVINO optimized${NC}"
 else
-    echo -e "   • Speed: ${YELLOW}10-30 tokens/sec${NC} (CPU-only mode)"
+    echo -e "   • Speed: ${YELLOW}5-15 tokens/sec${NC} (CPU-only mode)"
     echo -e "   • Hardware: ${YELLOW}CPU-only (slower but functional)${NC}"
 fi
 echo -e "   • Memory: ${GREEN}~1-8GB${NC} (depends on model choice)"
