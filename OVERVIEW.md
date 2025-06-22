@@ -25,7 +25,7 @@ NPGlue seamlessly connects your development environment to a powerful local AI m
 
 ## 🚀 **Quick Start for New Users**
 
-1. **Clone the repo**: `git clone <url> npglue`
+1. **Clone the repo**: `git clone https://github.com/CyphrRiot/npglue.git`
 2. **Run installer**: `cd npglue && ./install.sh` 
 3. **Start server**: `./start_server.sh`
 4. **Configure Goose**: Copy `goose_config_example.yaml` to `~/.config/goose/config.yaml`
@@ -47,9 +47,9 @@ NPGlue seamlessly connects your development environment to a powerful local AI m
 
 ## 🔧 **Technical Stack**
 
-- **Model**: DeepSeek-R1-0528-Qwen3-8B (FP16 OpenVINO)
+- **Model**:   DeepSeek-R1-0528-Qwen3-8B (FP16 OpenVINO)
 - **Runtime**: OpenVINO 2025.x on CPU/NPU
-- **Server**: FastAPI with OpenAI-compatible endpoints
+- **Server**:  FastAPI with OpenAI-compatible endpoints
 - **Optimization**: Intel CPU performance tuning
 
 ---

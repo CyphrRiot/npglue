@@ -1,8 +1,9 @@
-# Goose Configuration for Local DeepSeek-R1 FP16 OpenVINO
-# Place this in ~/.config/goose/config.yaml or use as reference
+# Goose Configuration for Local DeepSeek-R1 INT4-AWQ OpenVINO
+# Place this in ~/.config/goose/config.yaml ONLY if you don't have existing config
+# See installer instructions for safe configuration
 
-# Local DeepSeek-R1 FP16 OpenVINO Configuration  
-GOOSE_MODEL: deepseek-r1-fp16-openvino
+# Local DeepSeek-R1 INT4-AWQ OpenVINO Configuration  
+GOOSE_MODEL: deepseek-r1-openvino
 GOOSE_PROVIDER: openai  # Use OpenAI-compatible API
 GOOSE_API_BASE: http://localhost:8000/v1  # Local server endpoint
 GOOSE_API_KEY: local-key  # Dummy key for local server

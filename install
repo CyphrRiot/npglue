@@ -111,13 +111,20 @@ echo
 echo -e "${YELLOW}1. Start the AI server:${NC}"
 echo -e "   ${CYAN}./start_server.sh${NC}"
 echo
-echo -e "${YELLOW}2. Update Goose configuration:${NC}"
+echo -e "${YELLOW}2. Configure Goose (SAFE method):${NC}"
+echo -e "   ${CYAN}# Check if you have existing Goose config:${NC}"
+echo -e "   ${CYAN}ls ~/.config/goose/config.yaml${NC}"
+echo
+echo -e "   ${CYAN}# If NO existing config:${NC}"
+echo -e "   ${CYAN}mkdir -p ~/.config/goose${NC}"
 echo -e "   ${CYAN}cp goose_config_example.yaml ~/.config/goose/config.yaml${NC}"
-echo -e "   ${CYAN}# or add to existing config:${NC}"
+echo
+echo -e "   ${CYAN}# If you HAVE existing config, add these lines:${NC}"
 echo -e "${PURPLE}   provider: openai${NC}"
 echo -e "${PURPLE}   model: deepseek-r1-openvino${NC}"
 echo -e "${PURPLE}   api_base: http://localhost:8000/v1${NC}"
 echo -e "${PURPLE}   api_key: local-key${NC}"
+echo -e "   ${CYAN}# (don't overwrite your existing settings!)${NC}"
 echo
 echo -e "${YELLOW}3. Update Zed settings:${NC}"
 echo -e "   ${CYAN}# Add to ~/.config/zed/settings.json:${NC}"

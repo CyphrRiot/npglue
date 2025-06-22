@@ -45,7 +45,7 @@ That's it! The installer does everything and gives you clear instructions for Go
 
 The installer gives you exact instructions for:
 1. Starting the server
-2. Configuring Goose
+2. **Safely** configuring Goose (won't overwrite existing config)
 3. Setting up Zed
 4. Testing everything
 
