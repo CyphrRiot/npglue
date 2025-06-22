@@ -626,16 +626,20 @@ async def ollama_chat(request: dict):
         # Load model if needed
         model, tokenizer, device = load_model_safe()
         
-        # Use proper Qwen3 chat formatting
-        messages = [{"role": "user", "content": user_message}]
+        # Use proper Qwen3 chat formatting - ONLY the current user message for fresh context
+        chat_messages = [{"role": "user", "content": user_message}]
+        
+        print(f"🔍 DEBUG: Chat template input: {chat_messages}")
         
         # Apply chat template with thinking disabled for direct responses
         formatted_text = tokenizer.apply_chat_template(
-            messages,
+            chat_messages,
             tokenize=False,
             add_generation_prompt=True,
             enable_thinking=False  # Disable thinking mode for direct answers
         )
+        
+        print(f"🔍 DEBUG: Formatted text: {formatted_text[:200]}...")
         
         # Generate response with strict memory limits
         inputs = tokenizer(formatted_text, return_tensors="pt", truncation=True, max_length=512)
