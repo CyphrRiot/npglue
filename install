@@ -1,5 +1,5 @@
 #!/bin/bash
-# NPGlue - DeepSeek-R1 Installation Script
+# NPGlue - Qwen3 Installation Script
 # Simple, beautiful, and memory-safe installation
 
 set -e
@@ -15,7 +15,7 @@ NC='\033[0m'
 clear
 echo -e "${BLUE}╭─────────────────────────────────────────────╮${NC}"
 echo -e "${BLUE}│             🚀 NPGlue Installer             │${NC}"
-echo -e "${BLUE}│      DeepSeek-R1 + OpenVINO + Goose         │${NC}"
+echo -e "${BLUE}│        Qwen3 + OpenVINO + Goose          │${NC}"
 echo -e "${BLUE}╰─────────────────────────────────────────────╯${NC}"
 echo
 echo -e "${CYAN}This will install everything you need for local AI coding assistance${NC}"
@@ -168,7 +168,7 @@ echo -e "   ${CYAN}cp goose_config_example.yaml ~/.config/goose/config.yaml${NC}
 echo
 echo -e "   ${CYAN}# If you HAVE existing config, add these lines:${NC}"
 echo -e "${PURPLE}   provider: openai${NC}"
-echo -e "${PURPLE}   model: deepseek-r1-openvino${NC}"
+echo -e "${PURPLE}   model: qwen3-openvino${NC}"
 echo -e "${PURPLE}   api_base: http://localhost:8000/v1${NC}"
 echo -e "${PURPLE}   api_key: local-key${NC}"
 echo -e "   ${CYAN}# (don't overwrite your existing settings!)${NC}"
@@ -180,8 +180,8 @@ echo -e "${PURPLE}     \"ollama\": {${NC}"
 echo -e "${PURPLE}       \"api_url\": \"http://localhost:8000\",${NC}"
 echo -e "${PURPLE}       \"available_models\": [${NC}"
 echo -e "${PURPLE}         {${NC}"
-echo -e "${PURPLE}           \"name\": \"deepseek-r1-openvino\",${NC}"
-echo -e "${PURPLE}           \"display_name\": \"DeepSeek-R1 Local\",${NC}"
+echo -e "${PURPLE}           \"name\": \"qwen3-openvino\",${NC}"
+echo -e "${PURPLE}           \"display_name\": \"Qwen3 Local\",${NC}"
 echo -e "${PURPLE}           \"max_tokens\": 32768,${NC}"
 echo -e "${PURPLE}           \"supports_tools\": true${NC}"
 echo -e "${PURPLE}         }${NC}"
@@ -191,7 +191,7 @@ echo -e "${PURPLE}   },${NC}"
 echo -e "${PURPLE}   \"agent\": {${NC}"
 echo -e "${PURPLE}     \"default_model\": {${NC}"
 echo -e "${PURPLE}       \"provider\": \"ollama\",${NC}"
-echo -e "${PURPLE}       \"model\": \"deepseek-r1-openvino\"${NC}"
+echo -e "${PURPLE}       \"model\": \"qwen3-openvino\"${NC}"
 echo -e "${PURPLE}     }${NC}"
 echo -e "${PURPLE}   }${NC}"
 echo
@@ -200,9 +200,9 @@ echo -e "   ${CYAN}curl http://localhost:8000/health${NC}"
 echo -e "   ${CYAN}python test_installation.py${NC}"
 echo
 echo -e "${GREEN}📊 Performance expectations:${NC}"
-echo -e "   • Speed: ${GREEN}20-30+ tokens/sec${NC} (INT4-AWQ optimized)"
-echo -e "   • Memory: ${GREEN}~6-8GB${NC} (reduced from FP16)"
-echo -e "   • Model: ${GREEN}DeepSeek-R1 INT4-AWQ (~5.6GB)${NC}"
+echo -e "   • Speed: ${GREEN}20-50+ tokens/sec${NC} (depends on model choice)"
+echo -e "   • Memory: ${GREEN}~1-8GB${NC} (depends on model choice)"
+echo -e "   • Model: ${GREEN}Qwen3 (your choice) - direct answers${NC}"
 echo -e "   • Quality: ${GREEN}95%+ of FP16 capability${NC}"
 echo
 echo -e "${BLUE}💡 Tips:${NC}"
