@@ -236,8 +236,8 @@ async def chat_completions(request: dict):
         num_generated_tokens = len(generated_tokens)
         tokens_per_sec = num_generated_tokens / generation_time if generation_time > 0 else 0
         
-        # Add performance footer to response
-        performance_footer = f"\n\n---\n*Completed in {generation_time:.2f} seconds at {tokens_per_sec:.1f} tokens/sec*"
+        # Add performance footer outside code blocks
+        performance_footer = f"\n\n*Completed in {generation_time:.2f} seconds at {tokens_per_sec:.1f} tokens/sec*"
         generated_text_with_footer = generated_text + performance_footer
         
         # Cleanup
@@ -331,8 +331,8 @@ async def generate_text(request: GenerateRequest):
         total_time = time.time() - start_time
         final_memory = get_memory_usage()
         
-        # Add performance footer to response text as well
-        performance_footer = f"\n\n---\n*Completed in {generation_time:.2f} seconds at {tokens_per_sec:.1f} tokens/sec*"
+        # Add performance footer outside code blocks
+        performance_footer = f"\n\n*Completed in {generation_time:.2f} seconds at {tokens_per_sec:.1f} tokens/sec*"
         generated_text_with_footer = generated_text + performance_footer
         
         # Cleanup
@@ -488,8 +488,8 @@ async def ollama_generate(request: dict):
         num_generated_tokens = len(generated_tokens)
         tokens_per_sec = num_generated_tokens / generation_time if generation_time > 0 else 0
         
-        # Add performance footer to response
-        performance_footer = f"\n\n---\n*Completed in {generation_time:.2f} seconds at {tokens_per_sec:.1f} tokens/sec*"
+        # Add performance footer outside code blocks
+        performance_footer = f"\n\n*Completed in {generation_time:.2f} seconds at {tokens_per_sec:.1f} tokens/sec*"
         generated_text_with_footer = generated_text + performance_footer
         
         # Cleanup
@@ -590,8 +590,8 @@ async def ollama_chat(request: dict):
         num_generated_tokens = len(generated_tokens)
         tokens_per_sec = num_generated_tokens / generation_time if generation_time > 0 else 0
         
-        # Add performance footer to response
-        performance_footer = f"\n\n---\n*Completed in {generation_time:.2f} seconds at {tokens_per_sec:.1f} tokens/sec*"
+        # Add performance footer outside code blocks
+        performance_footer = f"\n\n*Completed in {generation_time:.2f} seconds at {tokens_per_sec:.1f} tokens/sec*"
         generated_text_with_footer = generated_text + performance_footer
         
         # Cleanup
