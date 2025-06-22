@@ -69,6 +69,7 @@ NPGlue is a local AI development assistant using DeepSeek-R1 with OpenVINO optim
 - [x] **CRITICAL FIX**: Fixed tokenization issue causing incorrect response extraction
 - [x] **SYSTEM MGMT**: start_server.sh now saves/restores CPU governor on exit (good system hygiene)
 - [x] **USER CHOICE**: Install script now offers model selection menu
+- [x] **PERFORMANCE DISPLAY**: All endpoints now add "Completed in X.XX seconds at X.X tokens/sec" footer
 - [ ] **USER ACTION**: Run updated `./install` and choose model size
 - [ ] **NEXT**: Test new model with "What is 2+2" question
 

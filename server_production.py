@@ -232,6 +232,14 @@ async def chat_completions(request: dict):
         generated_tokens = outputs[0][input_length:]
         generated_text = tokenizer.decode(generated_tokens, skip_special_tokens=True).strip()
         
+        # Calculate performance metrics
+        num_generated_tokens = len(generated_tokens)
+        tokens_per_sec = num_generated_tokens / generation_time if generation_time > 0 else 0
+        
+        # Add performance footer to response
+        performance_footer = f"\n\n---\n*Completed in {generation_time:.2f} seconds at {tokens_per_sec:.1f} tokens/sec*"
+        generated_text_with_footer = generated_text + performance_footer
+        
         # Cleanup
         del outputs, inputs
         gc.collect()
@@ -246,7 +254,7 @@ async def chat_completions(request: dict):
                 "index": 0,
                 "message": {
                     "role": "assistant",
-                    "content": generated_text
+                    "content": generated_text_with_footer
                 },
                 "finish_reason": "stop"
             }],
@@ -319,8 +327,13 @@ async def generate_text(request: GenerateRequest):
         # Calculate metrics
         word_count = len(generated_text.split())
         words_per_sec = word_count / generation_time if generation_time > 0 else 0
+        tokens_per_sec = len(generated_tokens) / generation_time if generation_time > 0 else 0
         total_time = time.time() - start_time
         final_memory = get_memory_usage()
+        
+        # Add performance footer to response text as well
+        performance_footer = f"\n\n---\n*Completed in {generation_time:.2f} seconds at {tokens_per_sec:.1f} tokens/sec*"
+        generated_text_with_footer = generated_text + performance_footer
         
         # Cleanup
         del outputs
@@ -328,7 +341,7 @@ async def generate_text(request: GenerateRequest):
         gc.collect()
         
         return GenerateResponse(
-            response=generated_text,
+            response=generated_text_with_footer,
             device=device,
             memory_gb=final_memory,
             generation_time=generation_time,
@@ -452,6 +465,9 @@ async def ollama_generate(request: dict):
                 detail=f"Insufficient memory for generation. Need 0.8GB+, have {available_gb:.1f}GB"
             )
         
+        # Start timing generation
+        generation_start = time.time()
+        
         outputs = model.generate(
             **inputs,
             max_new_tokens=100,  # Reasonable length
@@ -462,9 +478,19 @@ async def ollama_generate(request: dict):
             num_beams=1
         )
         
+        generation_time = time.time() - generation_start
+        
         # Properly extract only the generated tokens
         generated_tokens = outputs[0][input_length:]
         generated_text = tokenizer.decode(generated_tokens, skip_special_tokens=True).strip()
+        
+        # Calculate performance metrics
+        num_generated_tokens = len(generated_tokens)
+        tokens_per_sec = num_generated_tokens / generation_time if generation_time > 0 else 0
+        
+        # Add performance footer to response
+        performance_footer = f"\n\n---\n*Completed in {generation_time:.2f} seconds at {tokens_per_sec:.1f} tokens/sec*"
+        generated_text_with_footer = generated_text + performance_footer
         
         # Cleanup
         del outputs, inputs
@@ -474,15 +500,15 @@ async def ollama_generate(request: dict):
         return {
             "model": model_name,
             "created_at": time.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
-            "response": generated_text,
+            "response": generated_text_with_footer,
             "done": True,
             "context": [],
-            "total_duration": 1000000000,  # 1 second in nanoseconds
+            "total_duration": int(generation_time * 1e9),  # Convert to nanoseconds
             "load_duration": 0,
             "prompt_eval_count": len(tokenizer.encode(prompt)),
-            "prompt_eval_duration": 500000000,
-            "eval_count": len(tokenizer.encode(generated_text)),
-            "eval_duration": 500000000
+            "prompt_eval_duration": int(generation_time * 1e9 * 0.1),  # Rough estimate
+            "eval_count": num_generated_tokens,
+            "eval_duration": int(generation_time * 1e9 * 0.9)  # Most time spent in eval
         }
         
     except Exception as e:
@@ -540,6 +566,9 @@ async def ollama_chat(request: dict):
                 detail=f"Insufficient memory for generation. Need 0.8GB+, have {available_gb:.1f}GB"
             )
         
+        # Start timing generation
+        generation_start = time.time()
+        
         outputs = model.generate(
             **inputs,
             max_new_tokens=50,  # Reasonable length for answers
@@ -551,9 +580,19 @@ async def ollama_chat(request: dict):
             num_beams=1,
         )
         
+        generation_time = time.time() - generation_start
+        
         # Properly extract only the generated tokens
         generated_tokens = outputs[0][input_length:]
         generated_text = tokenizer.decode(generated_tokens, skip_special_tokens=True).strip()
+        
+        # Calculate performance metrics
+        num_generated_tokens = len(generated_tokens)
+        tokens_per_sec = num_generated_tokens / generation_time if generation_time > 0 else 0
+        
+        # Add performance footer to response
+        performance_footer = f"\n\n---\n*Completed in {generation_time:.2f} seconds at {tokens_per_sec:.1f} tokens/sec*"
+        generated_text_with_footer = generated_text + performance_footer
         
         # Cleanup
         del outputs, inputs
@@ -565,7 +604,7 @@ async def ollama_chat(request: dict):
             "created_at": time.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
             "message": {
                 "role": "assistant",
-                "content": generated_text
+                "content": generated_text_with_footer
             },
             "done": True
         }
