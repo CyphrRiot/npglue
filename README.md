@@ -58,6 +58,12 @@ This helps you:
 - Identify when your system needs optimization
 - Debug slow response issues
 
+**Token Limits:**
+- **Respects user preferences** - Request up to 4096 tokens
+- **No artificial caps** - Let the model complete naturally
+- **Smart defaults** - 200 tokens if not specified
+- **Memory aware** - Monitors available RAM during generation
+
 ## 📊 **Performance Expectations**
 
 | Model | Size | Memory | Speed | Quality | Best For |
@@ -223,6 +229,7 @@ python -c "import openvino; print(openvino.Core().available_devices)"
 
 ## 🚀 **Recent Improvements**
 
+- ✅ **Flexible Token Limits**: Respects user preferences up to 4096 tokens (no more artificial caps!)
 - ✅ **Performance Display**: All responses now show "Completed in X.XX seconds at X.X tokens/sec"
 - ✅ **Model Choice Menu**: Pick Qwen3-8B-INT8 OR Qwen3-0.6B-FP16 during install
 - ✅ **Switched from DeepSeek-R1**: No more rambling - direct answers now!  
