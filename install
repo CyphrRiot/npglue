@@ -15,7 +15,7 @@ NC='\033[0m'
 clear
 echo -e "${BLUE}╭─────────────────────────────────────────────╮${NC}"
 echo -e "${BLUE}│             🚀 NPGlue Installer             │${NC}"
-echo -e "${BLUE}│        Qwen3 + OpenVINO + Goose          │${NC}"
+echo -e "${BLUE}│        Qwen3 + OpenVINO + Goose             │${NC}"
 echo -e "${BLUE}╰─────────────────────────────────────────────╯${NC}"
 echo
 echo -e "${CYAN}This will install everything you need for local AI coding assistance${NC}"
@@ -111,7 +111,7 @@ pip install transformers --no-deps
 pip install tokenizers safetensors regex pyyaml tqdm
 # 5. Install optimum packages
 echo -e "${CYAN}Installing optimum-intel...${NC}"
-pip install optimum --no-deps  
+pip install optimum --no-deps
 pip install optimum-intel --no-deps
 echo -e "${GREEN}✅ AI packages installed (CPU-only)${NC}"
 
@@ -248,13 +248,13 @@ echo -e "   ${CYAN}curl http://localhost:11434/health${NC}"
 echo
 echo -e "${GREEN}📊 Performance expectations:${NC}"
 if [ "$HAS_INTEL_NPU" = true ]; then
-    echo -e "   • Speed: ${GREEN}15-25 tokens/sec${NC} (NPU accelerated)"
+    echo -e "   • Speed: ${GREEN}20-30 tokens/sec${NC} (NPU accelerated)"
     echo -e "   • Hardware: ${GREEN}Intel NPU + OpenVINO optimized${NC}"
 elif [ "$HAS_INTEL_GPU" = true ]; then
-    echo -e "   • Speed: ${GREEN}10-20 tokens/sec${NC} (Intel GPU accelerated)"
+    echo -e "   • Speed: ${GREEN}5-10 tokens/sec${NC} (Intel GPU accelerated)"
     echo -e "   • Hardware: ${GREEN}Intel iGPU + OpenVINO optimized${NC}"
 else
-    echo -e "   • Speed: ${YELLOW}5-15 tokens/sec${NC} (CPU-only mode)"
+    echo -e "   • Speed: ${YELLOW}2-5 tokens/sec${NC} (CPU-only mode)"
     echo -e "   • Hardware: ${YELLOW}CPU-only (slower but functional)${NC}"
 fi
 echo -e "   • Memory: ${GREEN}~1-8GB${NC} (depends on model choice)"

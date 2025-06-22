@@ -37,9 +37,9 @@ The installer will ask you to choose your model:
 - **CPU**: Intel preferred (excellent OpenVINO optimization)
 - **Shell**: Compatible with bash, zsh, and fish
 - **Hardware acceleration**: 
-  - **Best**: Intel NPU (12th gen+ processors) - 15-25 tokens/sec
-  - **Good**: Intel integrated GPU - 10-20 tokens/sec  
-  - **Basic**: Any CPU - 5-15 tokens/sec (slower but functional)
+  - **Best**: Intel NPU (12th gen+ processors) - 20-30 tokens/sec
+  - **Good**: Intel integrated GPU - 5-10 tokens/sec  
+  - **Basic**: Any CPU - 2-5 tokens/sec (slower but functional)
 
 ## 📊 **Performance Monitoring**
 
@@ -110,8 +110,8 @@ Easily switch between models based on your needs:
 
 | Model               | Size   | Memory   | Speed (NPU)  | Speed (iGPU) | Speed (CPU)  | Best For                              |
 | ------------------- | ------ | -------- | ------------ | ------------ | ------------ | ------------------------------------- |
-| **Qwen3-8B-INT8**   | ~6-8GB | 8GB+ RAM | 15-25 tok/s  | 10-20 tok/s  | 5-15 tok/s   | Complex coding, detailed explanations |
-| **Qwen3-0.6B-FP16** | ~1-2GB | 2GB+ RAM | 20-35 tok/s  | 15-25 tok/s  | 10-20 tok/s  | Quick answers, simple tasks           |
+| **Qwen3-8B-INT8**   | ~6-8GB | 8GB+ RAM | 20-30 tok/s  | 5-10 tok/s   | 2-5 tok/s    | Complex coding, detailed explanations |
+| **Qwen3-0.6B-FP16** | ~1-2GB | 2GB+ RAM | 25-40 tok/s  | 8-15 tok/s   | 4-8 tok/s    | Quick answers, simple tasks           |
 
 ## 🛠️ **What the Installer Does**
 
