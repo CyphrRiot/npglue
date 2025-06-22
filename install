@@ -26,6 +26,54 @@ echo -e "${BLUE}📋 Checking system requirements...${NC}"
 TOTAL_MEM_GB=$(free -g | awk '/^Mem:/{print $2}')
 AVAILABLE_GB=$(df . | awk 'NR==2{printf "%.0f", $4/1024/1024}')
 
+# Check for Intel NPU/iGPU
+echo -e "${BLUE}🔍 Checking Intel hardware compatibility...${NC}"
+HAS_INTEL_GPU=false
+HAS_INTEL_NPU=false
+
+# Check for Intel integrated graphics
+if lspci | grep -i "intel.*graphics" >/dev/null 2>&1; then
+    HAS_INTEL_GPU=true
+    echo -e "${GREEN}✅ Intel integrated graphics detected${NC}"
+else
+    echo -e "${YELLOW}⚠️  No Intel integrated graphics detected${NC}"
+fi
+
+# Check for Intel NPU (Neural Processing Unit)
+if lspci | grep -i "intel.*npu\|intel.*neural" >/dev/null 2>&1; then
+    HAS_INTEL_NPU=true
+    echo -e "${GREEN}✅ Intel NPU detected - hardware acceleration available${NC}"
+elif [ -d "/sys/class/drm/renderD*" ] && ls /sys/class/drm/renderD* 2>/dev/null | grep -q .; then
+    # Check for Intel compute units via render devices
+    echo -e "${BLUE}🔍 Checking for Intel compute acceleration...${NC}"
+    HAS_INTEL_GPU=true
+    echo -e "${GREEN}✅ Intel compute acceleration available${NC}"
+else
+    echo -e "${YELLOW}⚠️  No Intel NPU detected${NC}"
+fi
+
+# Provide guidance based on hardware
+if [ "$HAS_INTEL_NPU" = true ]; then
+    echo -e "${CYAN}💡 Your system has Intel NPU - excellent for AI acceleration!${NC}"
+elif [ "$HAS_INTEL_GPU" = true ]; then
+    echo -e "${CYAN}💡 Your system has Intel GPU - good for OpenVINO acceleration${NC}"
+else
+    echo -e "${YELLOW}💡 No Intel NPU/GPU detected - will use CPU-only mode${NC}"
+    echo -e "${YELLOW}   This will work but will be slower than NPU-accelerated systems${NC}"
+    echo -e "${YELLOW}   Consider upgrading to Intel 12th gen+ with NPU for best performance${NC}"
+    echo
+    read -p "Continue with CPU-only installation? (y/N): " continue_cpu
+    case $continue_cpu in
+        [Yy]* )
+            echo -e "${GREEN}Proceeding with CPU-only installation...${NC}"
+            ;;
+        * )
+            echo -e "${RED}Installation cancelled. Consider upgrading hardware for optimal experience.${NC}"
+            exit 1
+            ;;
+    esac
+fi
+
 if [ "$TOTAL_MEM_GB" -lt 8 ]; then
     echo -e "${RED}❌ Need at least 8GB RAM (found ${TOTAL_MEM_GB}GB)${NC}"
     echo -e "${YELLOW}💡 INT4-AWQ model is memory efficient but still needs 8GB+${NC}"
@@ -197,10 +245,18 @@ echo -e "${PURPLE}   }${NC}"
 echo
 echo -e "${YELLOW}4. Test the installation:${NC}"
 echo -e "   ${CYAN}curl http://localhost:11434/health${NC}"
-echo -e "   ${CYAN}python test_installation.py${NC}"
 echo
 echo -e "${GREEN}📊 Performance expectations:${NC}"
-echo -e "   • Speed: ${GREEN}20-50+ tokens/sec${NC} (depends on model choice)"
+if [ "$HAS_INTEL_NPU" = true ]; then
+    echo -e "   • Speed: ${GREEN}30-70+ tokens/sec${NC} (NPU accelerated)"
+    echo -e "   • Hardware: ${GREEN}Intel NPU + OpenVINO optimized${NC}"
+elif [ "$HAS_INTEL_GPU" = true ]; then
+    echo -e "   • Speed: ${GREEN}20-50+ tokens/sec${NC} (Intel GPU accelerated)"
+    echo -e "   • Hardware: ${GREEN}Intel iGPU + OpenVINO optimized${NC}"
+else
+    echo -e "   • Speed: ${YELLOW}10-30 tokens/sec${NC} (CPU-only mode)"
+    echo -e "   • Hardware: ${YELLOW}CPU-only (slower but functional)${NC}"
+fi
 echo -e "   • Memory: ${GREEN}~1-8GB${NC} (depends on model choice)"
 echo -e "   • Model: ${GREEN}Qwen3 (your choice) - direct answers${NC}"
 echo -e "   • Quality: ${GREEN}95%+ of FP16 capability${NC}"
