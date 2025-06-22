@@ -200,8 +200,8 @@ async def chat_completions(request: dict):
             enable_thinking=False  # Disable thinking mode for direct answers
         )
         
-        # Limit max tokens to prevent memory issues
-        max_tokens = min(max_tokens, 500)  # Increased for complete responses
+        # Use user's requested max_tokens (with reasonable safety limit)
+        max_tokens = min(max_tokens, 4096) if max_tokens > 0 else 200
         
         # Tokenize input
         inputs = tokenizer(
@@ -296,8 +296,8 @@ async def generate_text(request: GenerateRequest):
                 detail=f"Insufficient memory for generation. Available: {available_gb:.1f}GB"
             )
         
-        # Limit max tokens to prevent memory issues
-        max_tokens = min(request.max_tokens, 500)  # Increased for complete responses
+        # Use user's requested max_tokens (with reasonable safety limit)
+        max_tokens = min(request.max_tokens, 4096) if request.max_tokens > 0 else 200
         
         # Tokenize input
         inputs = tokenizer(
@@ -478,7 +478,7 @@ async def ollama_generate(request: dict):
         
         outputs = model.generate(
             **inputs,
-            max_new_tokens=200,  # Increased for complete responses
+            max_new_tokens=1000,  # Allow longer responses, let model decide when to stop
             do_sample=True,
             temperature=0.7,
             pad_token_id=tokenizer.eos_token_id,
@@ -579,7 +579,7 @@ async def ollama_chat(request: dict):
         
         outputs = model.generate(
             **inputs,
-            max_new_tokens=200,  # Increased for complete responses
+            max_new_tokens=1000,  # Allow longer responses, let model decide when to stop
             do_sample=True,
             temperature=0.7,    # Normal temperature for natural responses
             pad_token_id=tokenizer.eos_token_id,
