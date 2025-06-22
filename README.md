@@ -86,7 +86,8 @@ Add to your `~/.config/zed/settings.json`:
   "language_models": {
     "openai": {
       "api_url": "http://localhost:8000/v1",
-      "api_key": "local-key", 
+      "api_key": "local-key",
+      "version": "1",
       "available_models": [
         {
           "name": "deepseek-r1-openvino",
