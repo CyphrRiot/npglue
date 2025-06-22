@@ -4,7 +4,7 @@ Production-ready Qwen3-8B OpenVINO Server
 Memory-safe with proper error handling
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
 import openvino as ov
 from optimum.intel import OVModelForCausalLM
@@ -143,9 +143,20 @@ async def health_check():
         return {"status": "error", "error": str(e)}
 
 @app.post("/v1/chat/completions")
-async def chat_completions(request: dict):
-    """OpenAI-compatible chat completions endpoint for Goose"""
+async def chat_completions(request: dict, authorization: Optional[str] = Header(None)):
+    """OpenAI-compatible chat completions endpoint for Goose and Zed"""
     try:
+        # Basic API key validation (accept any non-empty Authorization header)
+        if authorization is None:
+            raise HTTPException(status_code=401, detail="Authorization header required")
+        
+        # Accept both "Bearer local-key" and just "local-key" formats
+        if authorization and (authorization.startswith("Bearer ") or authorization == "local-key"):
+            # Valid authorization
+            pass
+        else:
+            raise HTTPException(status_code=401, detail="Invalid authorization format")
+        
         # Extract message content from OpenAI format
         messages = request.get("messages", [])
         if not messages:
