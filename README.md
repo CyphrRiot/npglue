@@ -1,4 +1,4 @@
-# NPGlue - Local AI Development Assistant
+# NPGlue - Intel NPU Glue for AI
 
 **NPGlue** provides a complete setup for running **DeepSeek-R1** locally using OpenVINO for AI-assisted coding and development.
 
@@ -78,7 +78,35 @@ api_key: local-key
 
 ## ⚡ **Zed Integration**
 
+**For newer Zed versions (current structure):**
+
 Add to your `~/.config/zed/settings.json`:
+```json
+{
+  "language_models": {
+    "openai": {
+      "api_url": "http://localhost:8000/v1",
+      "api_key": "local-key", 
+      "available_models": [
+        {
+          "name": "deepseek-r1-openvino",
+          "display_name": "DeepSeek-R1 Local",
+          "max_tokens": 4096,
+          "supports_tools": true
+        }
+      ]
+    }
+  },
+  "agent": {
+    "default_model": {
+      "provider": "openai",
+      "model": "deepseek-r1-openvino"
+    }
+  }
+}
+```
+
+**For older Zed versions (legacy structure):**
 ```json
 {
   "assistant": {
