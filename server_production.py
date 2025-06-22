@@ -419,21 +419,21 @@ async def ollama_generate(request: dict):
         # Generate with strict memory limits
         inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=512)
         
-        # Check memory before generation
+        # Check memory before generation (be more reasonable)
         has_memory, available_gb, current_gb = check_memory_availability()
-        if not has_memory or available_gb < 4.0:  # Need 4GB free
+        if available_gb < 1.5:  # Only need 1.5GB free
             raise HTTPException(
                 status_code=503,
-                detail=f"Insufficient memory for generation. Need 4GB+, have {available_gb:.1f}GB"
+                detail=f"Insufficient memory for generation. Need 1.5GB+, have {available_gb:.1f}GB"
             )
         
         outputs = model.generate(
             **inputs,
-            max_new_tokens=50,  # Keep it short
+            max_new_tokens=100,  # Reasonable length
             do_sample=True,
             temperature=0.7,
             pad_token_id=tokenizer.eos_token_id,
-            use_cache=False,  # Save memory
+            use_cache=True,
             num_beams=1
         )
         
@@ -494,22 +494,22 @@ async def ollama_chat(request: dict):
         # Generate response with strict memory limits
         inputs = tokenizer(user_message, return_tensors="pt", truncation=True, max_length=512)  # Shorter context
         
-        # Check memory before generation
+        # Check memory before generation (be more reasonable)  
         has_memory, available_gb, current_gb = check_memory_availability()
-        if not has_memory or available_gb < 4.0:  # Need 4GB free
+        if available_gb < 1.5:  # Only need 1.5GB free
             raise HTTPException(
                 status_code=503,
-                detail=f"Insufficient memory for generation. Need 4GB+, have {available_gb:.1f}GB"
+                detail=f"Insufficient memory for generation. Need 1.5GB+, have {available_gb:.1f}GB"
             )
         
         outputs = model.generate(
             **inputs,
-            max_new_tokens=50,  # Much shorter responses
+            max_new_tokens=100,  # Bring back reasonable length
             do_sample=True,
             temperature=0.7,
             pad_token_id=tokenizer.eos_token_id,
-            use_cache=False,  # Disable KV cache to save memory
-            num_beams=1,      # No beam search
+            use_cache=True,  # Re-enable cache for better performance
+            num_beams=1,
         )
         
         full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
