@@ -73,7 +73,7 @@ cp goose_config_example.yaml ~/.config/goose/config.yaml
 ```yaml
 provider: openai
 model: qwen3-openvino  
-api_base: http://localhost:8000/v1
+api_base: http://localhost:11434/v1
 api_key: local-key
 ```
 
@@ -85,7 +85,7 @@ api_key: local-key
 {
   "language_models": {
     "ollama": {
-      "api_url": "http://localhost:8000",
+      "api_url": "http://localhost:11434",
       "available_models": [
         {
           "name": "qwen3-openvino",
@@ -116,13 +116,13 @@ After running `./install`, test with:
 ./start_server.sh
 
 # Test health
-curl http://localhost:8000/health
+curl http://localhost:11434/health
 
 # Test Ollama API (for Zed)
-curl http://localhost:8000/api/tags
+curl http://localhost:11434/api/tags
 
 # Test OpenAI API (for Goose)  
-curl http://localhost:8000/v1/models
+curl http://localhost:11434/v1/models
 
 # Run full model test  
 python test_installation.py
@@ -183,9 +183,9 @@ npglue/
 ## 🔧 **Advanced Usage**
 
 ### **API Endpoints:**
-- **Chat**: `http://localhost:8000/v1/chat/completions` (OpenAI compatible)
-- **Health**: `http://localhost:8000/health`
-- **Docs**: `http://localhost:8000/docs`
+- **Chat**: `http://localhost:11434/v1/chat/completions` (OpenAI compatible)
+- **Health**: `http://localhost:11434/health`
+- **Docs**: `http://localhost:11434/docs`
 
 ### **Environment Control:**
 ```bash

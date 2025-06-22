@@ -588,13 +588,13 @@ if __name__ == "__main__":
         print("❌ Insufficient memory to start server")
         sys.exit(1)
     
-    print("\n🔄 Starting server on http://127.0.0.1:8000")
-    print("📖 Visit http://127.0.0.1:8000/docs for API documentation")
+    print("\n🔄 Starting server on http://127.0.0.1:11434")
+    print("📖 Visit http://127.0.0.1:11434/docs for API documentation")
     
     # Start the server
     uvicorn.run(
         app,
         host="127.0.0.1",
-        port=8000,
+        port=11434,
         log_level="info"
     )
