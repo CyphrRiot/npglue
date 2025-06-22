@@ -13,11 +13,19 @@
 
 ## 🚀 **Quick Start**
 
+**Standard Installation (Recommended)**
 ```bash
-git clone <your-repo-url> npglue
+git clone https://github.com/CyphrRiot/npglue.git npglue
 cd npglue
 chmod +x install.sh
 ./install.sh
+```
+
+**Simple Alternative (Python-only)**
+```bash
+git clone https://github.com/CyphrRiot/npglue.git npglue
+cd npglue
+python setup.py  # Minimal setup without system optimizations
 ```
 
 After installation:
@@ -126,7 +134,8 @@ python -c "import openvino; print(openvino.Core().available_devices)"
 
 ```
 npglue/
-├── install.sh              # Main installation script
+├── install.sh              # Complete installation script (RECOMMENDED)
+├── setup.py                # Simple Python-only installer (alternative)
 ├── start_server.sh          # Start the AI server
 ├── server_production.py     # FastAPI server with OpenAI API
 ├── test_installation.py     # Installation verification
