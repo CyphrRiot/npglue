@@ -103,6 +103,20 @@ Easily switch between models based on your needs:
 
 **Tip**: If you're getting slow performance (under 15 tok/sec), run the diagnostics tool to identify memory pressure or other issues.
 
+### **CPU Performance Management**
+```bash
+# Manual CPU optimization
+./boost_cpu.sh           # Set CPU to performance mode
+
+# Manual CPU restoration  
+./restore_cpu.sh         # Restore power-saving mode
+
+# Automatic management (recommended)
+./start_server.sh        # Auto-saves/restores CPU settings
+```
+
+**Note**: `start_server.sh` automatically saves your CPU governor settings and restores them when you press `Ctrl+C` or exit the server.
+
 ## 📊 **Performance Expectations**
 
 | Model               | Size   | Memory   | Speed       | Quality   | Best For                              |
@@ -240,13 +254,14 @@ NPGlue provides **complete API compatibility** with both OpenAI and Ollama:
 ```
 npglue/
 ├── install                     # 🌟 Beautiful one-command installer
-├── start_server.sh             # Start the AI server (shell-compatible)
+├── start_server.sh             # Start the AI server (auto CPU cleanup on exit)
 ├── activate_env.sh             # 🐚 Shell-specific environment activation
 ├── server_production.py        # FastAPI server with dual API compatibility
 ├── test_installation.py        # Verify installation works
 ├── diagnose_performance.py     # 🔍 Performance diagnostics tool
 ├── switch_model.sh             # 🔄 Easy model switching utility
 ├── boost_cpu.sh               # CPU performance optimization
+├── restore_cpu.sh             # 🔄 Restore CPU to power-saving mode
 ├── goose_config_example.yaml  # Safe Goose configuration template
 ├── README.md                  # This documentation
 ├── npglue-env/                # Python environment (created)
