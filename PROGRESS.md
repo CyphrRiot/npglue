@@ -64,6 +64,7 @@ NPGlue is a local AI development assistant using DeepSeek-R1 with OpenVINO optim
 - [x] **CRITICAL FIX v2**: Use --no-deps and manual dependency installation to avoid CUDA
 - [x] **NAMING FIX**: Changed environment name from "openvino-env" to "npglue-env" (consistent branding)
 - [x] **PORT FIX**: Changed from port 8000 to 11434 (Ollama's default port - true drop-in replacement)
+- [x] **MAX_TOKENS FIX**: Changed from 32768 to 4096 (reasonable generation limit for Qwen3)
 - [x] **USER CHOICE**: Install script now offers model selection menu
 - [ ] **USER ACTION**: Run updated `./install` and choose model size
 - [ ] **NEXT**: Test new model with "What is 2+2" question

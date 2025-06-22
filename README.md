@@ -90,7 +90,7 @@ api_key: local-key
         {
           "name": "qwen3-openvino",
           "display_name": "Qwen3 Local",
-          "max_tokens": 32768,
+          "max_tokens": 4096,
           "supports_tools": true
         }
       ]
