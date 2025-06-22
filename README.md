@@ -91,7 +91,7 @@ Add to your `~/.config/zed/settings.json`:
         {
           "name": "deepseek-r1-openvino",
           "display_name": "DeepSeek-R1 Local",
-          "max_tokens": 4096,
+          "max_tokens": 32768,
           "supports_tools": true
         }
       ]
