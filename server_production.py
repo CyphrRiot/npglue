@@ -363,9 +363,157 @@ async def list_models_openai():
     except Exception as e:
         return {"error": str(e)}
 
+# Add Ollama-compatible endpoints
+@app.get("/api/tags")
+async def ollama_list_models():
+    """Ollama-compatible models list endpoint"""
+    try:
+        print(f"🔍 DEBUG: /api/tags called (Ollama models list)")
+        return {
+            "models": [
+                {
+                    "name": "deepseek-r1-openvino",
+                    "size": 6000000000,  # ~6GB
+                    "digest": "local",
+                    "model": "deepseek-r1-openvino",
+                    "modified_at": time.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+                    "details": {
+                        "format": "gguf",
+                        "family": "deepseek",
+                        "families": ["deepseek"],
+                        "parameter_size": "8B",
+                        "quantization_level": "INT4-AWQ"
+                    }
+                }
+            ]
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.post("/api/generate")
+async def ollama_generate(request: dict):
+    """Ollama-compatible generate endpoint"""
+    try:
+        print(f"🔍 DEBUG: /api/generate called with: {list(request.keys())}")
+        
+        # Extract prompt from Ollama format
+        prompt = request.get("prompt", "")
+        model_name = request.get("model", "")
+        
+        if not prompt:
+            raise HTTPException(status_code=400, detail="No prompt provided")
+        
+        print(f"🔍 DEBUG: Model: {model_name}, Prompt: {prompt[:50]}...")
+        
+        # Load model if needed
+        model, tokenizer, device = load_model_safe()
+        
+        # Check memory before generation
+        has_memory, available_gb, current_gb = check_memory_availability()
+        if not has_memory:
+            raise HTTPException(
+                status_code=503,
+                detail=f"Insufficient memory for generation. Available: {available_gb:.1f}GB"
+            )
+        
+        # Generate
+        inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=1024)
+        outputs = model.generate(
+            **inputs,
+            max_new_tokens=100,  # Keep it reasonable
+            do_sample=True,
+            temperature=0.7,
+            pad_token_id=tokenizer.eos_token_id
+        )
+        
+        full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        generated_text = full_response[len(prompt):].strip()
+        
+        # Cleanup
+        del outputs, inputs
+        gc.collect()
+        
+        # Return Ollama-compatible format
+        return {
+            "model": model_name,
+            "created_at": time.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+            "response": generated_text,
+            "done": True,
+            "context": [],
+            "total_duration": 1000000000,  # 1 second in nanoseconds
+            "load_duration": 0,
+            "prompt_eval_count": len(tokenizer.encode(prompt)),
+            "prompt_eval_duration": 500000000,
+            "eval_count": len(tokenizer.encode(generated_text)),
+            "eval_duration": 500000000
+        }
+        
+    except Exception as e:
+        print(f"❌ Generation error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/chat")
+async def ollama_chat(request: dict):
+    """Ollama-compatible chat endpoint for Zed"""
+    try:
+        print(f"🔍 DEBUG: /api/chat called with: {list(request.keys())}")
+        
+        # Extract from Ollama chat format
+        messages = request.get("messages", [])
+        model_name = request.get("model", "")
+        
+        if not messages:
+            raise HTTPException(status_code=400, detail="No messages provided")
+        
+        # Get the last user message
+        user_message = ""
+        for msg in reversed(messages):
+            if msg.get("role") == "user":
+                user_message = msg.get("content", "")
+                break
+        
+        if not user_message:
+            raise HTTPException(status_code=400, detail="No user message found")
+        
+        print(f"🔍 DEBUG: Chat - Model: {model_name}, User message: {user_message[:50]}...")
+        
+        # Load model if needed
+        model, tokenizer, device = load_model_safe()
+        
+        # Generate response
+        inputs = tokenizer(user_message, return_tensors="pt", truncation=True, max_length=1024)
+        outputs = model.generate(
+            **inputs,
+            max_new_tokens=150,
+            do_sample=True,
+            temperature=0.7,
+            pad_token_id=tokenizer.eos_token_id
+        )
+        
+        full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        generated_text = full_response[len(user_message):].strip()
+        
+        # Cleanup
+        del outputs, inputs
+        gc.collect()
+        
+        # Return Ollama chat format
+        return {
+            "model": model_name,
+            "created_at": time.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+            "message": {
+                "role": "assistant",
+                "content": generated_text
+            },
+            "done": True
+        }
+        
+    except Exception as e:
+        print(f"❌ Chat error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/unload")
 async def unload_model():
-    """Manually unload model to free memory"""
     global model, tokenizer, device_used
     
     with model_lock:
