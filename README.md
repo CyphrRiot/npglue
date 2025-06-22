@@ -17,12 +17,15 @@ The installer will ask you to choose your model:
 ## ✅ **What You Get**
 
 - **Qwen3 Models**: Purpose-built for direct Q&A and coding assistance
-- **Model Choice**: Pick 8B for quality or 0.6B for speed
+- **Model Choice**: Pick 8B for quality or 0.6B for speed (switch anytime!)
 - **OpenVINO Optimized**: Fast inference optimized for Intel hardware
 - **20-50+ tokens/sec**: Fast local inference with memory efficiency
 - **Performance Display**: Every response shows completion time and token rate
+- **Performance Diagnostics**: Built-in tools to identify and fix performance issues
+- **Model Switching**: Easy switching between models based on your needs
 - **Direct Answers**: No more rambling - get "4" when you ask "What is 2+2"
 - **Zed Compatible**: Works as Ollama provider (no API key hassles!)
+- **Full Ollama API**: Complete compatibility with Ollama ecosystem
 - **Dual API Support**: Both OpenAI and Ollama compatible endpoints
 - **Goose Ready**: Drop-in replacement for OpenAI API
 
@@ -63,6 +66,33 @@ This helps you:
 - **No artificial caps** - Let the model complete naturally
 - **Smart defaults** - 200 tokens if not specified
 - **Memory aware** - Monitors available RAM during generation
+
+## 🛠️ **Performance Optimization**
+
+NPGlue includes built-in tools to diagnose and optimize performance:
+
+### **Performance Diagnostics**
+```bash
+python diagnose_performance.py
+```
+
+This tool checks:
+- CPU governor and frequency settings
+- Memory usage and swap status
+- Model configuration and size
+- Top resource-consuming processes
+- OpenVINO setup and optimization
+
+### **Model Switching**
+```bash
+./switch_model.sh
+```
+
+Easily switch between models based on your needs:
+- **8B model**: Maximum quality for complex tasks (needs 8GB+ RAM)
+- **0.6B model**: Speed and efficiency for quick responses (needs 2GB+ RAM)
+
+**Tip**: If you're getting slow performance (under 15 tok/sec), run the diagnostics tool to identify memory pressure or other issues.
 
 ## 📊 **Performance Expectations**
 
@@ -161,17 +191,24 @@ python test_installation.py
 
 ## 🔌 **API Endpoints**
 
-NPGlue provides **dual API compatibility**:
-
-**Ollama API** (for Zed):
-- `GET /api/tags` - List models
-- `POST /api/chat` - Chat completions  
-- `POST /api/generate` - Text generation
+NPGlue provides **complete API compatibility** with both OpenAI and Ollama:
 
 **OpenAI API** (for Goose):
 - `GET /v1/models` - List models
 - `POST /v1/chat/completions` - Chat completions
 - `GET /health` - Health check
+
+**Ollama API** (for Zed):
+- `GET /api/tags` - List models
+- `POST /api/chat` - Chat completions  
+- `POST /api/generate` - Text generation
+- `POST /api/show` - Model details
+- `GET /api/version` - Version info
+- `POST /api/pull` - Model management (returns success for local models)
+
+**Utilities:**
+- `GET /models` - System information
+- `POST /unload` - Unload model from memory
 
 ## 🌍 **Works With**
 
@@ -187,15 +224,17 @@ NPGlue provides **dual API compatibility**:
 npglue/
 ├── install                     # 🌟 Beautiful one-command installer
 ├── start_server.sh             # Start the AI server  
-├── server_production.py        # FastAPI server with OpenAI API
+├── server_production.py        # FastAPI server with dual API compatibility
 ├── test_installation.py        # Verify installation works
+├── diagnose_performance.py     # 🔍 Performance diagnostics tool
+├── switch_model.sh             # 🔄 Easy model switching utility
 ├── boost_cpu.sh               # CPU performance optimization
 ├── goose_config_example.yaml  # Safe Goose configuration template
 ├── README.md                  # This documentation
 ├── npglue-env/               # Python environment (created)
-├── models/                    # Your chosen model (downloaded)
-    ├── qwen3-8b-int8/         # OR
-    └── qwen3-0.6b-fp16/       # Depending on your choice
+├── models/                    # Downloaded models
+    ├── qwen3-8b-int8/         # High quality model (8GB)
+    └── qwen3-0.6b-fp16/       # Fast model (1-2GB)
 ```
 
 ## 🎯 **Why Choose NPGlue?**
@@ -229,6 +268,10 @@ python -c "import openvino; print(openvino.Core().available_devices)"
 
 ## 🚀 **Recent Improvements**
 
+- ✅ **Complete Ollama API**: Added `/api/show`, `/api/version`, `/api/pull` endpoints (no more 404s!)
+- ✅ **Performance Diagnostics**: Built-in tool to identify memory/CPU issues (`diagnose_performance.py`)
+- ✅ **Model Switching**: Easy utility to switch between 8B and 0.6B models (`switch_model.sh`)
+- ✅ **Memory Optimization**: Automatic detection and fixes for memory pressure issues
 - ✅ **Flexible Token Limits**: Respects user preferences up to 4096 tokens (no more artificial caps!)
 - ✅ **Performance Display**: All responses now show "Completed in X.XX seconds at X.X tokens/sec"
 - ✅ **Model Choice Menu**: Pick Qwen3-8B-INT8 OR Qwen3-0.6B-FP16 during install
