@@ -146,15 +146,22 @@ async def health_check():
 async def chat_completions(request: dict, authorization: Optional[str] = Header(None)):
     """OpenAI-compatible chat completions endpoint for Goose and Zed"""
     try:
+        # Debug logging
+        print(f"🔍 DEBUG: Authorization header: '{authorization}'")
+        print(f"🔍 DEBUG: Request keys: {list(request.keys())}")
+        
         # Basic API key validation (accept any non-empty Authorization header)
         if authorization is None:
+            print("❌ No Authorization header found")
             raise HTTPException(status_code=401, detail="Authorization header required")
         
         # Accept both "Bearer local-key" and just "local-key" formats
         if authorization and (authorization.startswith("Bearer ") or authorization == "local-key"):
+            print(f"✅ Valid authorization: {authorization}")
             # Valid authorization
             pass
         else:
+            print(f"❌ Invalid authorization format: {authorization}")
             raise HTTPException(status_code=401, detail="Invalid authorization format")
         
         # Extract message content from OpenAI format
@@ -345,6 +352,44 @@ async def list_models():
                 "sufficient": has_memory
             }
         }
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/v1/models") 
+async def list_models_openai(authorization: Optional[str] = Header(None)):
+    """OpenAI-compatible models endpoint for Zed"""
+    try:
+        # Debug logging
+        print(f"🔍 DEBUG /v1/models: Authorization header: '{authorization}'")
+        
+        # Basic API key validation
+        if authorization is None:
+            print("❌ No Authorization header in /v1/models")
+            raise HTTPException(status_code=401, detail="Authorization header required")
+        
+        if authorization and (authorization.startswith("Bearer ") or authorization == "local-key"):
+            print(f"✅ Valid authorization in /v1/models: {authorization}")
+        else:
+            print(f"❌ Invalid authorization in /v1/models: {authorization}")
+            raise HTTPException(status_code=401, detail="Invalid authorization format")
+        
+        # Return OpenAI-compatible models list
+        return {
+            "object": "list",
+            "data": [
+                {
+                    "id": "deepseek-r1-openvino",
+                    "object": "model", 
+                    "created": int(time.time()),
+                    "owned_by": "local",
+                    "permission": [],
+                    "root": "deepseek-r1-openvino",
+                    "parent": None
+                }
+            ]
+        }
+    except HTTPException:
+        raise
     except Exception as e:
         return {"error": str(e)}
 
