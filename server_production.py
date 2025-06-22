@@ -416,14 +416,25 @@ async def ollama_generate(request: dict):
                 detail=f"Insufficient memory for generation. Available: {available_gb:.1f}GB"
             )
         
-        # Generate
-        inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=1024)
+        # Generate with strict memory limits
+        inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=512)
+        
+        # Check memory before generation
+        has_memory, available_gb, current_gb = check_memory_availability()
+        if not has_memory or available_gb < 4.0:  # Need 4GB free
+            raise HTTPException(
+                status_code=503,
+                detail=f"Insufficient memory for generation. Need 4GB+, have {available_gb:.1f}GB"
+            )
+        
         outputs = model.generate(
             **inputs,
-            max_new_tokens=100,  # Keep it reasonable
+            max_new_tokens=50,  # Keep it short
             do_sample=True,
             temperature=0.7,
-            pad_token_id=tokenizer.eos_token_id
+            pad_token_id=tokenizer.eos_token_id,
+            use_cache=False,  # Save memory
+            num_beams=1
         )
         
         full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
@@ -480,14 +491,25 @@ async def ollama_chat(request: dict):
         # Load model if needed
         model, tokenizer, device = load_model_safe()
         
-        # Generate response
-        inputs = tokenizer(user_message, return_tensors="pt", truncation=True, max_length=1024)
+        # Generate response with strict memory limits
+        inputs = tokenizer(user_message, return_tensors="pt", truncation=True, max_length=512)  # Shorter context
+        
+        # Check memory before generation
+        has_memory, available_gb, current_gb = check_memory_availability()
+        if not has_memory or available_gb < 4.0:  # Need 4GB free
+            raise HTTPException(
+                status_code=503,
+                detail=f"Insufficient memory for generation. Need 4GB+, have {available_gb:.1f}GB"
+            )
+        
         outputs = model.generate(
             **inputs,
-            max_new_tokens=150,
+            max_new_tokens=50,  # Much shorter responses
             do_sample=True,
             temperature=0.7,
-            pad_token_id=tokenizer.eos_token_id
+            pad_token_id=tokenizer.eos_token_id,
+            use_cache=False,  # Disable KV cache to save memory
+            num_beams=1,      # No beam search
         )
         
         full_response = tokenizer.decode(outputs[0], skip_special_tokens=True)
