@@ -18,9 +18,9 @@ That's it! The beautiful installer does everything and gives you clear, safe ins
 - **INT4-AWQ Optimized**: Advanced quantization preserving 95%+ quality at half the size
 - **20-30+ tokens/sec**: Fast local inference with reduced RAM usage
 - **Memory Efficient**: ~6-8GB RAM usage (vs 10-12GB FP16)
-- **Safe Configuration**: Won't overwrite your existing Goose or Zed settings
-- **Goose Compatible**: Drop-in replacement for OpenAI API
-- **Zed Ready**: Perfect for local AI coding assistance
+- **Zed Compatible**: Works as Ollama provider (no API key hassles!)
+- **Dual API Support**: Both OpenAI and Ollama compatible endpoints
+- **Goose Ready**: Drop-in replacement for OpenAI API
 
 ## 🔧 **Requirements**
 
@@ -76,18 +76,15 @@ api_base: http://localhost:8000/v1
 api_key: local-key
 ```
 
-## ⚡ **Zed Integration**
+## ⚡ **Zed Integration (WORKING!)**
 
-**For newer Zed versions (current structure):**
+**NPGlue works as an Ollama provider** (no API key hassles!):
 
-Add to your `~/.config/zed/settings.json`:
 ```json
 {
   "language_models": {
-    "openai": {
-      "api_url": "http://localhost:8000/v1",
-      "api_key": "local-key",
-      "version": "1",
+    "ollama": {
+      "api_url": "http://localhost:8000",
       "available_models": [
         {
           "name": "deepseek-r1-openvino",
@@ -100,26 +97,14 @@ Add to your `~/.config/zed/settings.json`:
   },
   "agent": {
     "default_model": {
-      "provider": "openai",
+      "provider": "ollama",
       "model": "deepseek-r1-openvino"
     }
   }
 }
 ```
 
-**For older Zed versions (legacy structure):**
-```json
-{
-  "assistant": {
-    "version": "2",
-    "provider": {
-      "name": "openai",
-      "api_url": "http://localhost:8000/v1", 
-      "api_key": "local-key"
-    }
-  }
-}
-```
+**Why this works:** Zed's OpenAI provider is finicky about API keys, but the Ollama provider "just works"!
 
 ## 🧪 **Testing Your Installation**
 
@@ -129,12 +114,32 @@ After running `./install`, test with:
 # Start the server
 ./start_server.sh
 
-# Test the API
+# Test health
 curl http://localhost:8000/health
+
+# Test Ollama API (for Zed)
+curl http://localhost:8000/api/tags
+
+# Test OpenAI API (for Goose)  
+curl http://localhost:8000/v1/models
 
 # Run full model test  
 python test_installation.py
 ```
+
+## 🔌 **API Endpoints**
+
+NPGlue provides **dual API compatibility**:
+
+**Ollama API** (for Zed):
+- `GET /api/tags` - List models
+- `POST /api/chat` - Chat completions  
+- `POST /api/generate` - Text generation
+
+**OpenAI API** (for Goose):
+- `GET /v1/models` - List models
+- `POST /v1/chat/completions` - Chat completions
+- `GET /health` - Health check
 
 ## 🌍 **Works With**
 
@@ -189,6 +194,8 @@ python -c "import openvino; print(openvino.Core().available_devices)"
 
 ## 🚀 **Recent Improvements**
 
+- ✅ **Dual API Support**: Both OpenAI AND Ollama compatible endpoints
+- ✅ **Zed Integration Fixed**: Works as Ollama provider (no API key issues!)  
 - ✅ **Switched to INT4-AWQ**: Better speed/memory with 95%+ quality
 - ✅ **Safe configuration**: Protects existing Goose/Zed settings
 - ✅ **Simplified installer**: One beautiful command does everything  
