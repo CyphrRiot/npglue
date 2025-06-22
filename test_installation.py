@@ -9,8 +9,8 @@ from optimum.intel import OVModelForCausalLM
 from transformers import AutoTokenizer
 
 def test_model():
-    print("🧪 Testing DeepSeek-R1 FP16 OpenVINO Installation")
-    print("=" * 50)
+    print("🧪 Testing DeepSeek-R1 INT4-AWQ OpenVINO Installation")
+    print("=" * 54)
     
     model_path = "models/deepseek-r1-int4-awq/DeepSeek-R1-0528-Qwen3-8B-int4_asym-awq-se-ov"
     

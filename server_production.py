@@ -66,7 +66,7 @@ def load_model_safe():
         if model is not None:  # Double-check pattern
             return model, tokenizer, device_used
         
-        print("🤖 Loading DeepSeek-R1 FP16 OpenVINO model...")
+        print("🤖 Loading DeepSeek-R1 INT4-AWQ OpenVINO model...")
         model_path = "models/deepseek-r1-int4-awq/DeepSeek-R1-0528-Qwen3-8B-int4_asym-awq-se-ov"
         
         # Check memory before loading
