@@ -1,5 +1,7 @@
 # NPGlue - Intel NPU Glue for AI
 
+![Two Things](Image/two%20things.png)
+
 **NPGlue** provides a complete setup for running **Qwen3** models locally using OpenVINO for AI-assisted coding and development with **direct, quality answers**.
 
 ## 🚀 **Quick Start**
