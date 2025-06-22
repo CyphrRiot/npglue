@@ -229,7 +229,7 @@ async def chat_completions(request: dict):
             "id": f"chatcmpl-{int(time.time())}",
             "object": "chat.completion",
             "created": int(time.time()),
-            "model": "qwen3-8b-openvino", 
+            "model": "qwen3", 
             "choices": [{
                 "index": 0,
                 "message": {
@@ -337,7 +337,7 @@ async def list_models():
         has_memory, available_gb, current_gb = check_memory_availability()
         
         return {
-            "models": ["qwen3-8b-openvino"],
+            "models": ["qwen3"],
             "devices": core.available_devices,
             "current_device": device_used,
             "model_loaded": model is not None,
@@ -361,12 +361,12 @@ async def list_models_openai():
             "object": "list",
             "data": [
                 {
-                    "id": "deepseek-r1-openvino",
+                    "id": "qwen3",
                     "object": "model", 
                     "created": int(time.time()),
                     "owned_by": "local",
                     "permission": [],
-                    "root": "deepseek-r1-openvino",
+                    "root": "qwen3",
                     "parent": None
                 }
             ]
@@ -383,17 +383,17 @@ async def ollama_list_models():
         return {
             "models": [
                 {
-                    "name": "deepseek-r1-openvino",
+                    "name": "qwen3",
                     "size": 6000000000,  # ~6GB
                     "digest": "local",
-                    "model": "deepseek-r1-openvino",
+                    "model": "qwen3",
                     "modified_at": time.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
                     "details": {
-                        "format": "gguf",
-                        "family": "deepseek",
-                        "families": ["deepseek"],
+                        "format": "openvino",
+                        "family": "qwen",
+                        "families": ["qwen"],
                         "parameter_size": "8B",
-                        "quantization_level": "INT4-AWQ"
+                        "quantization_level": "INT8"
                     }
                 }
             ]

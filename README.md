@@ -72,7 +72,7 @@ cp goose_config_example.yaml ~/.config/goose/config.yaml
 **If you HAVE existing Goose config, just add:**
 ```yaml
 provider: openai
-model: qwen3-openvino  
+model: qwen3  
 api_base: http://localhost:11434/v1
 api_key: local-key
 ```
@@ -88,7 +88,7 @@ api_key: local-key
       "api_url": "http://localhost:11434",
       "available_models": [
         {
-          "name": "qwen3-openvino",
+          "name": "qwen3",
           "display_name": "Qwen3 Local",
           "max_tokens": 4096,
           "supports_tools": true
@@ -99,7 +99,7 @@ api_key: local-key
   "agent": {
     "default_model": {
       "provider": "ollama",
-      "model": "qwen3-openvino"
+      "model": "qwen3"
     }
   }
 }
