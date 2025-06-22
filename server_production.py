@@ -201,7 +201,7 @@ async def chat_completions(request: dict):
         )
         
         # Limit max tokens to prevent memory issues
-        max_tokens = min(max_tokens, 200)
+        max_tokens = min(max_tokens, 500)  # Increased for complete responses
         
         # Tokenize input
         inputs = tokenizer(
@@ -297,7 +297,7 @@ async def generate_text(request: GenerateRequest):
             )
         
         # Limit max tokens to prevent memory issues
-        max_tokens = min(request.max_tokens, 200)
+        max_tokens = min(request.max_tokens, 500)  # Increased for complete responses
         
         # Tokenize input
         inputs = tokenizer(
@@ -478,7 +478,7 @@ async def ollama_generate(request: dict):
         
         outputs = model.generate(
             **inputs,
-            max_new_tokens=100,  # Reasonable length
+            max_new_tokens=200,  # Increased for complete responses
             do_sample=True,
             temperature=0.7,
             pad_token_id=tokenizer.eos_token_id,
@@ -579,7 +579,7 @@ async def ollama_chat(request: dict):
         
         outputs = model.generate(
             **inputs,
-            max_new_tokens=50,  # Reasonable length for answers
+            max_new_tokens=200,  # Increased for complete responses
             do_sample=True,
             temperature=0.7,    # Normal temperature for natural responses
             pad_token_id=tokenizer.eos_token_id,
