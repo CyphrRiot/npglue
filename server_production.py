@@ -4,6 +4,10 @@ Production-ready Qwen3-8B OpenVINO Server
 Memory-safe with proper error handling
 """
 
+# Set transformers verbosity to reduce warnings
+import os
+os.environ["TRANSFORMERS_VERBOSITY"] = "error"
+
 from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
 import openvino as ov
@@ -12,10 +16,14 @@ from transformers import AutoTokenizer
 import uvicorn
 import threading
 import psutil
-import os
 import gc
 import time
+import warnings
 from typing import Optional
+
+# Suppress transformers warnings about unsupported generation flags
+warnings.filterwarnings("ignore", message=".*generation flags are not valid.*")
+warnings.filterwarnings("ignore", message=".*may be ignored.*")
 
 # Global variables
 model = None
