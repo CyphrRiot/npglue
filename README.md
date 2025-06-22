@@ -20,6 +20,7 @@ The installer will ask you to choose your model:
 - **Model Choice**: Pick 8B for quality or 0.6B for speed
 - **OpenVINO Optimized**: Fast inference optimized for Intel hardware
 - **20-50+ tokens/sec**: Fast local inference with memory efficiency
+- **Performance Display**: Every response shows completion time and token rate
 - **Direct Answers**: No more rambling - get "4" when you ask "What is 2+2"
 - **Zed Compatible**: Works as Ollama provider (no API key hassles!)
 - **Dual API Support**: Both OpenAI and Ollama compatible endpoints
@@ -32,6 +33,30 @@ The installer will ask you to choose your model:
 - **Storage**: 10-15GB free space  
 - **CPU**: Intel preferred (excellent OpenVINO optimization)
 - **Optional**: Intel NPU for potential acceleration
+
+## 📊 **Performance Monitoring**
+
+NPGlue automatically displays performance metrics with every response:
+
+```
+What is the capital of France?
+
+The capital of France is Paris.
+
+*Completed in 0.85 seconds at 23.2 tokens/sec*
+```
+
+**Benefits:**
+- **Real-time feedback** on AI response speed
+- **Performance monitoring** under different loads
+- **Model comparison** when testing different configurations
+- **System optimization** insights for tuning
+
+This helps you:
+- Monitor system performance
+- Compare model variants (8B vs 0.6B)
+- Identify when your system needs optimization
+- Debug slow response issues
 
 ## 📊 **Performance Expectations**
 
@@ -198,6 +223,7 @@ python -c "import openvino; print(openvino.Core().available_devices)"
 
 ## 🚀 **Recent Improvements**
 
+- ✅ **Performance Display**: All responses now show "Completed in X.XX seconds at X.X tokens/sec"
 - ✅ **Model Choice Menu**: Pick Qwen3-8B-INT8 OR Qwen3-0.6B-FP16 during install
 - ✅ **Switched from DeepSeek-R1**: No more rambling - direct answers now!  
 - ✅ **CPU-Only Install**: No NVIDIA dependencies on Intel systems
