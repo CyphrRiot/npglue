@@ -1,6 +1,6 @@
 # ɴᴘɢʟᴜᴇ - Intel NPU Ollama Replacement!
 
-**ɴᴘɢʟᴜᴇ** provides a complete setup for running **Qwen3** models locally using OpenVINO for AI-assisted coding and development with **direct, quality answers**.
+**ɴᴘɢʟᴜᴇ** provides a complete setup for running **multiple AI models** locally using OpenVINO for AI-assisted coding and development with **direct, quality answers**.
 
 ![I am a Pickle](Image/pickle_rick.png)
 
@@ -12,19 +12,30 @@ cd npglue
 ./install
 ```
 
-The installer will ask you to choose your model:
+The installer will ask you to choose your model from **8 options**:
 
+### **OpenVINO Pre-Optimized Models (fastest setup):**
 - **Qwen3-8B-INT8** (~6-8GB) - Best quality for complex tasks
-- **Qwen3-0.6B-FP16** (~1-2GB) - Fast and lightweight
+- **Qwen3-0.6B-FP16** (~1-2GB) - Fast and lightweight  
+- **OpenLlama-7B-INT4** (~4-5GB) - Great balance for coding
+- **OpenLlama-3B-INT4** (~2-3GB) - Lightweight with good performance
+
+### **Community Pre-Optimized Models:**
+- **Llama-3.1-8B-INT4** (~5-6GB) - Latest Llama with excellent coding abilities
+
+### **Convert-on-Install Models:**
+- **Phi-3-Mini-4K** (~4GB) - Microsoft model optimized for NPU
+- **DeepSeek-Coder-6.7B** (~6-7GB) - Specialized coding model, excellent for development  
+- **DeepSeek-Coder-1.3B** (~2GB) - Lightweight coding specialist
 
 ## ✅ **What You Get**
 
-- **Qwen3 Models**: Purpose-built for direct Q&A and coding assistance
-- **Model Choice**: Pick 8B for quality or 0.6B for speed (switch anytime!)
-- **OpenVINO Optimized**: Fast inference optimized for Intel hardware
-- **20-50+ tokens/sec**: Fast local inference with memory efficiency
+- **Multiple AI Models**: 8 models to choose from - Qwen3, Llama, Phi-3, DeepSeek coding specialists
+- **Model Choice**: Pick based on your needs - quality vs speed vs coding specialization
+- **Easy Model Switching**: Use `./switch_model.sh` to change models anytime (no reinstall needed!)  
+- **OpenVINO Optimized**: Fast inference optimized for Intel NPU/GPU hardware
+- **20-30+ tokens/sec**: Fast local inference with memory efficiency
 - **Performance Display**: Every response shows completion time and token rate
-- **Model Switching**: Easy switching between models based on your needs
 - **Direct Answers**: No rambling - get concise, actionable responses
 - **Zed Compatible**: Works as Ollama provider (no API key hassles!)
 - **Full Ollama API**: Complete compatibility with Ollama ecosystem
@@ -110,10 +121,16 @@ Easily switch between models based on your needs:
 
 ## 📊 **Performance Expectations**
 
-| Model               | Size   | Memory   | Speed (NPU) | Speed (iGPU) | Speed (CPU) | Best For                              |
-| ------------------- | ------ | -------- | ----------- | ------------ | ----------- | ------------------------------------- |
-| **Qwen3-8B-INT8**   | ~6-8GB | 8GB+ RAM | 20-30 tok/s | 5-10 tok/s   | 2-5 tok/s   | Complex coding, detailed explanations |
-| **Qwen3-0.6B-FP16** | ~1-2GB | 2GB+ RAM | 25-40 tok/s | 8-15 tok/s   | 4-8 tok/s   | Quick answers, simple tasks           |
+| Model                     | Size   | Memory   | Speed (NPU) | Speed (iGPU) | Speed (CPU) | Best For                              |
+| ------------------------- | ------ | -------- | ----------- | ------------ | ----------- | ------------------------------------- |
+| **Qwen3-8B-INT8**         | ~6-8GB | 8GB+ RAM | 20-30 tok/s | 5-10 tok/s   | 2-5 tok/s   | Complex tasks, detailed explanations |
+| **Qwen3-0.6B-FP16**       | ~1-2GB | 2GB+ RAM | 25-40 tok/s | 8-15 tok/s   | 4-8 tok/s   | Quick answers, simple tasks           |
+| **OpenLlama-7B-INT4**     | ~4-5GB | 6GB+ RAM | 22-35 tok/s | 6-12 tok/s   | 3-6 tok/s   | Balanced coding and general tasks     |
+| **OpenLlama-3B-INT4**     | ~2-3GB | 4GB+ RAM | 30-45 tok/s | 10-18 tok/s  | 5-9 tok/s   | Fast responses, lightweight           |
+| **Llama-3.1-8B-INT4**     | ~5-6GB | 8GB+ RAM | 20-30 tok/s | 5-10 tok/s   | 2-5 tok/s   | Latest Llama, excellent coding        |
+| **Phi-3-Mini-4K**         | ~4GB   | 6GB+ RAM | 25-35 tok/s | 7-14 tok/s   | 3-7 tok/s   | NPU-optimized, Microsoft quality      |
+| **DeepSeek-Coder-6.7B**   | ~6-7GB | 8GB+ RAM | 18-28 tok/s | 4-9 tok/s    | 2-4 tok/s   | Best for coding, development tasks    |
+| **DeepSeek-Coder-1.3B**   | ~2GB   | 3GB+ RAM | 35-50 tok/s | 12-20 tok/s  | 6-10 tok/s  | Fast coding assistant, lightweight    |
 
 ## 🛠️ **What the Installer Does**
 

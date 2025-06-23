@@ -113,17 +113,42 @@ pip install tokenizers safetensors regex pyyaml tqdm
 echo -e "${CYAN}Installing optimum-intel...${NC}"
 pip install optimum --no-deps
 pip install optimum-intel --no-deps
+# 6. Install protobuf and tokenizer dependencies (required for many models)
+echo -e "${CYAN}Installing protobuf and tokenizer dependencies...${NC}"
+pip install protobuf
+# Try to install sentencepiece, fall back to alternative if build fails
+echo -e "${CYAN}Attempting to install sentencepiece (may require build tools)...${NC}"
+pip install sentencepiece || {
+    echo -e "${YELLOW}⚠️  SentencePiece build failed, trying alternative tokenizer...${NC}"
+    pip install transformers[sentencepiece] || {
+        echo -e "${YELLOW}⚠️  Installing basic tokenizers only (some models may need manual setup)${NC}"
+        pip install tokenizers
+    }
+}
 echo -e "${GREEN}✅ AI packages installed (CPU-only)${NC}"
 
 # Download model (safe, no loading)
-echo -e "\n${BLUE}📥 Selecting Qwen3 model...${NC}"
-echo -e "${CYAN}Choose your Qwen3 model variant:${NC}"
+echo -e "\n${BLUE}📥 Selecting AI model...${NC}"
+echo -e "${CYAN}Choose your AI model:${NC}"
 echo
-echo -e "${YELLOW}1) Qwen3-8B-INT8${NC}   - Best quality, ~6-8GB, slower"
-echo -e "${YELLOW}2) Qwen3-0.6B-FP16${NC} - Faster, ~1-2GB, good for simple tasks"
+echo -e "${GREEN}OpenVINO Pre-Optimized Models (fastest setup):${NC}"
+echo -e "${YELLOW}1) Qwen3-8B-INT8${NC}         - Best quality, ~6-8GB, excellent for complex tasks"
+echo -e "${YELLOW}2) Qwen3-0.6B-FP16${NC}       - Fast, ~1-2GB, good for simple tasks"
+echo -e "${YELLOW}3) OpenLlama-7B-INT4${NC}     - Great balance, ~4-5GB, good for coding"
+echo -e "${YELLOW}4) OpenLlama-3B-INT4${NC}     - Lightweight, ~2-3GB, fast responses"
+echo
+echo -e "${GREEN}Community Pre-Optimized Models:${NC}"
+echo -e "${YELLOW}5) Llama-3.1-8B-INT4${NC}     - Latest Llama, ~5-6GB, excellent coding"
+echo
+echo -e "${GREEN}Convert-on-Install Models (requires conversion):${NC}"
+echo -e "${YELLOW}6) Phi-3-Mini-4K${NC}         - Microsoft, ~4GB, excellent for NPU"
+echo -e "${YELLOW}7) DeepSeek-Coder-6.7B${NC}   - Code specialist, ~6-7GB, best for coding"
+echo -e "${YELLOW}8) DeepSeek-Coder-1.3B${NC}   - Light code specialist, ~2GB, fast coding"
+echo -e "${RED}⚠️  Note: OpenLlama models (3,4) require sentencepiece which may fail to build${NC}"
+echo -e "${RED}   on some systems. Choose Qwen3, Phi-3, or DeepSeek for more reliability.${NC}"
 echo
 while true; do
-    read -p "Enter your choice (1 or 2): " choice
+    read -p "Enter your choice (1-8): " choice
     case $choice in
         1)
             MODEL_REPO="OpenVINO/Qwen3-8B-int8-ov"
@@ -132,6 +157,8 @@ while true; do
             MODEL_NAME="Qwen3-8B-INT8"
             MODEL_SIZE="~6-8GB"
             MODEL_DESC="Best quality for complex tasks"
+            MODEL_TYPE="preoptimized"
+            MODEL_ID="qwen3-8b"
             break
             ;;
         2)
@@ -141,10 +168,78 @@ while true; do
             MODEL_NAME="Qwen3-0.6B-FP16"
             MODEL_SIZE="~1-2GB"
             MODEL_DESC="Fast and lightweight"
+            MODEL_TYPE="preoptimized"
+            MODEL_ID="qwen3-0.6b"
+            break
+            ;;
+        3)
+            MODEL_REPO="OpenVINO/open_llama_7b_v2-int4-ov"
+            MODEL_DIR="models/open-llama-7b-int4"
+            MODEL_FILE="$MODEL_DIR/openvino_model.bin"
+            MODEL_NAME="OpenLlama-7B-INT4"
+            MODEL_SIZE="~4-5GB"
+            MODEL_DESC="Great balance of quality and speed"
+            MODEL_TYPE="preoptimized"
+            MODEL_ID="open-llama-7b"
+            break
+            ;;
+        4)
+            MODEL_REPO="OpenVINO/open_llama_3b_v2-int4-ov"
+            MODEL_DIR="models/open-llama-3b-int4"
+            MODEL_FILE="$MODEL_DIR/openvino_model.bin"
+            MODEL_NAME="OpenLlama-3B-INT4"
+            MODEL_SIZE="~2-3GB"
+            MODEL_DESC="Lightweight with good performance"
+            MODEL_TYPE="preoptimized"
+            MODEL_ID="open-llama-3b"
+            break
+            ;;
+        5)
+            MODEL_REPO="Gunulhona/openvino-llama-3.1-8B_int4"
+            MODEL_DIR="models/llama-3.1-8b-int4"
+            MODEL_FILE="$MODEL_DIR/openvino_model.bin"
+            MODEL_NAME="Llama-3.1-8B-INT4"
+            MODEL_SIZE="~5-6GB"
+            MODEL_DESC="Latest Llama with excellent coding abilities"
+            MODEL_TYPE="preoptimized"
+            MODEL_ID="llama-3.1-8b"
+            break
+            ;;
+        6)
+            MODEL_REPO="microsoft/Phi-3-mini-4k-instruct"
+            MODEL_DIR="models/phi-3-mini-4k"
+            MODEL_FILE="$MODEL_DIR/openvino_model.bin"
+            MODEL_NAME="Phi-3-Mini-4K"
+            MODEL_SIZE="~4GB"
+            MODEL_DESC="Microsoft model optimized for NPU"
+            MODEL_TYPE="convert"
+            MODEL_ID="phi-3-mini"
+            break
+            ;;
+        7)
+            MODEL_REPO="deepseek-ai/deepseek-coder-6.7b-instruct"
+            MODEL_DIR="models/deepseek-coder-6.7b"
+            MODEL_FILE="$MODEL_DIR/openvino_model.bin"
+            MODEL_NAME="DeepSeek-Coder-6.7B"
+            MODEL_SIZE="~6-7GB"
+            MODEL_DESC="Specialized coding model, excellent for development"
+            MODEL_TYPE="convert"
+            MODEL_ID="deepseek-coder-6.7b"
+            break
+            ;;
+        8)
+            MODEL_REPO="deepseek-ai/deepseek-coder-1.3b-instruct"
+            MODEL_DIR="models/deepseek-coder-1.3b"
+            MODEL_FILE="$MODEL_DIR/openvino_model.bin"
+            MODEL_NAME="DeepSeek-Coder-1.3B"
+            MODEL_SIZE="~2GB"
+            MODEL_DESC="Lightweight coding specialist"
+            MODEL_TYPE="convert"
+            MODEL_ID="deepseek-coder-1.3b"
             break
             ;;
         *)
-            echo -e "${RED}Please enter 1 or 2${NC}"
+            echo -e "${RED}Please enter a number between 1 and 8${NC}"
             ;;
     esac
 done
@@ -153,9 +248,10 @@ mkdir -p models
 if [ -f "$MODEL_FILE" ]; then
     echo -e "${GREEN}✅ $MODEL_NAME already downloaded${NC}"
 else
-    echo -e "${CYAN}Downloading $MODEL_NAME OpenVINO model...${NC}"
-    echo -e "${PURPLE}$MODEL_DESC - $MODEL_SIZE${NC}"
-    python -c "
+    if [ "$MODEL_TYPE" = "preoptimized" ]; then
+        echo -e "${CYAN}Downloading $MODEL_NAME OpenVINO model...${NC}"
+        echo -e "${PURPLE}$MODEL_DESC - $MODEL_SIZE${NC}"
+        python -c "
 from huggingface_hub import snapshot_download
 snapshot_download(
     repo_id='$MODEL_REPO',
@@ -163,13 +259,41 @@ snapshot_download(
     local_dir_use_symlinks=False
 )
 print('✅ $MODEL_NAME downloaded successfully')
-print('🚀 Much better for direct Q&A than DeepSeek-R1!')
+print('🚀 Ready for NPU/GPU acceleration!')
 print('💾 Size: $MODEL_SIZE')
 "
+    else
+        echo -e "${CYAN}Converting $MODEL_NAME to OpenVINO format...${NC}"
+        echo -e "${PURPLE}$MODEL_DESC - $MODEL_SIZE${NC}"
+        echo -e "${YELLOW}⚠️  This will take 5-15 minutes depending on model size${NC}"
+        python -c "
+import os
+from optimum.intel import OVModelForCausalLM
+from transformers import AutoTokenizer
+
+print('📥 Downloading original model from Hugging Face...')
+tokenizer = AutoTokenizer.from_pretrained('$MODEL_REPO', trust_remote_code=True)
+print('🔄 Converting to OpenVINO format (this takes time)...')
+model = OVModelForCausalLM.from_pretrained(
+    '$MODEL_REPO', 
+    export=True,
+    device='CPU',
+    trust_remote_code=True
+)
+print('💾 Saving optimized model...')
+os.makedirs('$MODEL_DIR', exist_ok=True)
+model.save_pretrained('$MODEL_DIR')
+tokenizer.save_pretrained('$MODEL_DIR')
+print('✅ $MODEL_NAME converted and optimized successfully!')
+print('🚀 Ready for NPU/GPU acceleration!')
+print('💾 Size: $MODEL_SIZE')
+"
+    fi
 fi
 
-# Save model choice for server
+# Save model choice for server (include model ID for proper API responses)
 echo "MODEL_PATH=$MODEL_DIR" > .model_config
+echo "MODEL_ID=$MODEL_ID" >> .model_config
 
 # Memory-safe verification (no model loading)
 echo -e "\n${BLUE}🧪 Verifying installation...${NC}"
@@ -191,9 +315,22 @@ python server_production.py
 EOF
 chmod +x start_server.sh
 
-# CPU optimization
-echo -e "\n${BLUE}⚡ Optimizing CPU performance...${NC}"
-sudo ./boost_cpu.sh
+# CPU optimization (ASK USER)
+echo -e "\n${BLUE}⚡ CPU Performance Optimization${NC}"
+echo -e "${CYAN}Would you like to enable CPU performance mode for better AI inference?${NC}"
+echo -e "${YELLOW}This temporarily sets CPU governor to 'performance' mode.${NC}"
+echo -e "${YELLOW}Will be automatically restored when you exit the server.${NC}"
+echo
+read -p "Enable CPU performance mode? (y/N): " enable_cpu_boost
+case $enable_cpu_boost in
+    [Yy]* )
+        echo -e "${GREEN}Enabling CPU performance mode...${NC}"
+        sudo ./boost_cpu.sh
+        ;;
+    * )
+        echo -e "${CYAN}Keeping current CPU settings${NC}"
+        ;;
+esac
 
 # Beautiful completion message
 clear
@@ -202,6 +339,11 @@ echo -e "${GREEN}│           🎉 INSTALLATION COMPLETE!         │${NC}"
 echo -e "${GREEN}╰─────────────────────────────────────────────╯${NC}"
 echo
 echo -e "${BLUE}📋 NPGlue is ready! Here's what to do next:${NC}"
+echo
+echo -e "${PURPLE}✅ Installed: $MODEL_NAME${NC}"
+echo -e "${CYAN}   📁 Path: $MODEL_DIR${NC}"
+echo -e "${CYAN}   🏷️  Model ID: $MODEL_ID${NC}"
+echo -e "${CYAN}   💾 Size: $MODEL_SIZE${NC}"
 echo
 echo -e "${YELLOW}1. Start the AI server:${NC}"
 echo -e "   ${CYAN}./start_server.sh${NC}"
@@ -215,21 +357,21 @@ echo -e "   ${CYAN}mkdir -p ~/.config/goose${NC}"
 echo -e "   ${CYAN}cp goose_config_example.yaml ~/.config/goose/config.yaml${NC}"
 echo
 echo -e "   ${CYAN}# If you HAVE existing config, add these lines:${NC}"
-echo -e "${PURPLE}   provider: openai${NC}"
-echo -e "${PURPLE}   model: qwen3${NC}"
-echo -e "${PURPLE}   api_base: http://localhost:11434/v1${NC}"
-echo -e "${PURPLE}   api_key: local-key${NC}"
-echo -e "   ${CYAN}# (don't overwrite your existing settings!)${NC}"
+echo -e "${PURPLE}   provider: ollama${NC}"
+echo -e "${PURPLE}   model: $MODEL_ID${NC}"
+echo -e "${PURPLE}   api_base: http://localhost:11434${NC}"
+echo -e "${PURPLE}   # (don't overwrite your existing settings!)${NC}"
 echo
 echo -e "${YELLOW}3. Update Zed settings (WORKING SOLUTION):${NC}"
-echo -e "   ${CYAN}# Use Ollama provider (no API key hassles!):${NC}"
+echo -e "   ${CYAN}# See zed_settings_example.json for complete config${NC}"
+echo -e "   ${CYAN}# Key settings for your ~/.config/zed/settings.json:${NC}"
 echo -e "${PURPLE}   \"language_models\": {${NC}"
 echo -e "${PURPLE}     \"ollama\": {${NC}"
 echo -e "${PURPLE}       \"api_url\": \"http://localhost:11434\",${NC}"
 echo -e "${PURPLE}       \"available_models\": [${NC}"
 echo -e "${PURPLE}         {${NC}"
-echo -e "${PURPLE}           \"name\": \"qwen3\",${NC}"
-echo -e "${PURPLE}           \"display_name\": \"Qwen3 Local\",${NC}"
+echo -e "${PURPLE}           \"name\": \"$MODEL_ID\",${NC}"
+echo -e "${PURPLE}           \"display_name\": \"$MODEL_NAME Local\",${NC}"
 echo -e "${PURPLE}           \"max_tokens\": 4096,${NC}"
 echo -e "${PURPLE}           \"supports_tools\": true${NC}"
 echo -e "${PURPLE}         }${NC}"
@@ -239,14 +381,17 @@ echo -e "${PURPLE}   },${NC}"
 echo -e "${PURPLE}   \"agent\": {${NC}"
 echo -e "${PURPLE}     \"default_model\": {${NC}"
 echo -e "${PURPLE}       \"provider\": \"ollama\",${NC}"
-echo -e "${PURPLE}       \"model\": \"qwen3\"${NC}"
+echo -e "${PURPLE}       \"model\": \"$MODEL_ID\"${NC}"
 echo -e "${PURPLE}     }${NC}"
 echo -e "${PURPLE}   }${NC}"
 echo
 echo -e "${YELLOW}4. Test the installation:${NC}"
 echo -e "   ${CYAN}curl http://localhost:11434/health${NC}"
 echo
-echo -e "${GREEN}📊 Performance expectations:${NC}"
+echo -e "${YELLOW}5. Switch models anytime:${NC}"
+echo -e "   ${CYAN}./switch_model.sh${NC}"
+echo
+echo -e "${GREEN}📊 Performance expectations for $MODEL_NAME:${NC}"
 if [ "$HAS_INTEL_NPU" = true ]; then
     echo -e "   • Speed: ${GREEN}20-30 tokens/sec${NC} (NPU accelerated)"
     echo -e "   • Hardware: ${GREEN}Intel NPU + OpenVINO optimized${NC}"
@@ -257,13 +402,14 @@ else
     echo -e "   • Speed: ${YELLOW}2-5 tokens/sec${NC} (CPU-only mode)"
     echo -e "   • Hardware: ${YELLOW}CPU-only (slower but functional)${NC}"
 fi
-echo -e "   • Memory: ${GREEN}~1-8GB${NC} (depends on model choice)"
-echo -e "   • Model: ${GREEN}Qwen3 (your choice) - direct answers${NC}"
+echo -e "   • Memory: ${GREEN}$MODEL_SIZE${NC}"
+echo -e "   • Model: ${GREEN}$MODEL_NAME - $MODEL_DESC${NC}"
 echo -e "   • Quality: ${GREEN}95%+ of FP16 capability${NC}"
 echo
 echo -e "${BLUE}💡 Tips:${NC}"
 echo -e "   • First generation is slower (warmup)"
 echo -e "   • Use 'source npglue-env/bin/activate' to activate environment"
 echo -e "   • Server runs on http://localhost:11434"
+echo -e "   • Use ./switch_model.sh to change models without reinstalling"
 echo
 echo -e "${GREEN}✨ Happy coding with your local AI assistant! ✨${NC}"

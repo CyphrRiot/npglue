@@ -29,6 +29,7 @@ warnings.filterwarnings("ignore", message=".*may be ignored.*")
 model = None
 tokenizer = None
 device_used = None
+current_model_id = "qwen3"  # Default model ID
 model_lock = threading.Lock()
 
 class GenerateRequest(BaseModel):
@@ -74,19 +75,27 @@ def load_model_safe():
         if model is not None:  # Double-check pattern
             return model, tokenizer, device_used
         
-        # Read model path from config file
+        # Read model path and ID from config file
+        model_path = "models/qwen3-8b-int8"  # Default fallback
+        model_id = "qwen3"  # Default fallback
+        
         try:
             with open('.model_config', 'r') as f:
-                config = f.read().strip()
-                model_path = config.split('=')[1]
-            print(f"🤖 Loading {model_path.split('/')[-1]} OpenVINO model...")
+                lines = f.read().strip().split('\n')
+                for line in lines:
+                    if line.startswith('MODEL_PATH='):
+                        model_path = line.split('=')[1]
+                    elif line.startswith('MODEL_ID='):
+                        model_id = line.split('=')[1]
+            
+            model_name = model_path.split('/')[-1]
+            print(f"🤖 Loading {model_name} OpenVINO model...")
+            print(f"📁 Path: {model_path}")
+            print(f"🏷️  ID: {model_id}")
         except FileNotFoundError:
-            # Fallback to default
-            model_path = "models/qwen3-8b-int8"
-            print("🤖 Loading Qwen3-8B INT8 OpenVINO model...")
-        except Exception:
-            model_path = "models/qwen3-8b-int8"
-            print("🤖 Loading Qwen3-8B INT8 OpenVINO model...")
+            print("🤖 Loading Qwen3-8B INT8 OpenVINO model (default)...")
+        except Exception as e:
+            print(f"⚠️  Config error: {e}, using defaults")
         
         # Check memory before loading
         has_memory, available_gb, current_gb = check_memory_availability()
@@ -99,7 +108,7 @@ def load_model_safe():
         try:
             # Load tokenizer first
             print("  Loading tokenizer...")
-            tokenizer = AutoTokenizer.from_pretrained(model_path)
+            tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
             if tokenizer.pad_token is None:
                 tokenizer.pad_token = tokenizer.eos_token
             
@@ -118,6 +127,10 @@ def load_model_safe():
             model_memory = get_memory_usage()
             print(f"  Model loaded on {device_used} ({model_memory:.1f}GB total)")
             
+            # Store model_id globally for API responses
+            global current_model_id
+            current_model_id = model_id
+            
             # Test generation to ensure it works
             print("  Testing model...")
             test_inputs = tokenizer("Hello", return_tensors="pt")
@@ -128,7 +141,20 @@ def load_model_safe():
             return model, tokenizer, device_used
             
         except Exception as e:
-            print(f"❌ Model loading failed: {e}")
+            error_msg = str(e)
+            print(f"❌ Model loading failed: {error_msg}")
+            
+            # Provide specific help for common errors
+            if "sentencepiece" in error_msg.lower():
+                print(f"💡 This model requires SentencePiece tokenizer.")
+                print(f"   Try: pip install sentencepiece")
+                print(f"   Or switch to a model that doesn't need SentencePiece:")
+                print(f"   ./switch_model.sh")
+                print(f"   Choose: Qwen3, Phi-3, or DeepSeek models")
+            elif "protobuf" in error_msg.lower():
+                print(f"💡 This model requires protobuf.")
+                print(f"   Try: pip install protobuf")
+            
             # Cleanup on failure
             if 'model' in locals() and model is not None:
                 del model
@@ -137,7 +163,7 @@ def load_model_safe():
                 del tokenizer
                 tokenizer = None
             gc.collect()
-            raise HTTPException(status_code=500, detail=f"Model loading failed: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Model loading failed: {error_msg}")
 
 @app.get("/health")
 async def health_check():
@@ -193,12 +219,36 @@ async def chat_completions(request: dict):
         chat_messages = [{"role": "user", "content": user_message}]
         
         # Apply chat template with thinking disabled for direct responses
-        formatted_text = tokenizer.apply_chat_template(
-            chat_messages,
-            tokenize=False,
-            add_generation_prompt=True,
-            enable_thinking=False  # Disable thinking mode for direct answers
-        )
+        # Handle different model types for chat formatting
+        if "qwen" in current_model_id.lower():
+            formatted_text = tokenizer.apply_chat_template(
+                chat_messages,
+                tokenize=False,
+                add_generation_prompt=True,
+                enable_thinking=False  # Disable thinking mode for direct answers
+            )
+        elif "phi" in current_model_id.lower() or "deepseek" in current_model_id.lower():
+            # Phi and DeepSeek models may not have apply_chat_template or enable_thinking
+            try:
+                formatted_text = tokenizer.apply_chat_template(
+                    chat_messages,
+                    tokenize=False,
+                    add_generation_prompt=True
+                )
+            except:
+                # Fallback to simple formatting for models without chat templates
+                formatted_text = f"<|im_start|>user\n{user_message}<|im_end|>\n<|im_start|>assistant\n"
+        else:
+            # Generic fallback for other models
+            try:
+                formatted_text = tokenizer.apply_chat_template(
+                    chat_messages,
+                    tokenize=False,
+                    add_generation_prompt=True
+                )
+            except:
+                # Simple fallback
+                formatted_text = f"User: {user_message}\nAssistant: "
         
         # Use user's requested max_tokens (with reasonable safety limit)
         max_tokens = min(max_tokens, 4096) if max_tokens > 0 else 200
@@ -257,7 +307,7 @@ async def chat_completions(request: dict):
             "id": f"chatcmpl-{int(time.time())}",
             "object": "chat.completion",
             "created": int(time.time()),
-            "model": "qwen3", 
+            "model": current_model_id,  # Use dynamic model ID
             "choices": [{
                 "index": 0,
                 "message": {
@@ -371,7 +421,7 @@ async def list_models():
         has_memory, available_gb, current_gb = check_memory_availability()
         
         return {
-            "models": ["qwen3"],
+            "models": [current_model_id],  # Use dynamic model ID
             "devices": core.available_devices,
             "current_device": device_used,
             "model_loaded": model is not None,
@@ -395,12 +445,12 @@ async def list_models_openai():
             "object": "list",
             "data": [
                 {
-                    "id": "qwen3",
+                    "id": current_model_id,  # Use dynamic model ID
                     "object": "model", 
                     "created": int(time.time()),
                     "owned_by": "local",
                     "permission": [],
-                    "root": "qwen3",
+                    "root": current_model_id,
                     "parent": None
                 }
             ]
@@ -417,17 +467,17 @@ async def ollama_list_models():
         return {
             "models": [
                 {
-                    "name": "qwen3",
+                    "name": current_model_id,  # Use dynamic model ID
                     "size": 6000000000,  # ~6GB
                     "digest": "local",
-                    "model": "qwen3",
+                    "model": current_model_id,
                     "modified_at": time.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
                     "details": {
                         "format": "openvino",
-                        "family": "qwen",
-                        "families": ["qwen"],
-                        "parameter_size": "8B",
-                        "quantization_level": "INT8"
+                        "family": current_model_id.split('-')[0] if '-' in current_model_id else "qwen",
+                        "families": [current_model_id.split('-')[0] if '-' in current_model_id else "qwen"],
+                        "parameter_size": "Variable",
+                        "quantization_level": "INT4/INT8"
                     }
                 }
             ]

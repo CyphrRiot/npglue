@@ -1,11 +1,11 @@
-# Goose Configuration for Local NPGlue (Qwen3 + OpenVINO)
+# Goose Configuration for Local NPGlue (Multiple Model Support)
 # Place this in ~/.config/goose/config.yaml ONLY if you don't have existing config
 # See installer instructions for safe configuration
 
 # Use Ollama provider - NO API KEY NEEDED!
 # NPGlue supports both OpenAI and Ollama APIs, but Ollama provider is simpler
 GOOSE_PROVIDER: ollama
-GOOSE_MODEL: qwen3  # NPGlue serves Qwen3 models
+GOOSE_MODEL: qwen3  # NPGlue serves various models - check ./switch_model.sh for current
 OLLAMA_HOST: http://localhost:11434  # NPGlue server endpoint
 
 # System prompt for development assistant
