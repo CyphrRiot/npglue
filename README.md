@@ -78,7 +78,7 @@ This helps you:
 
 ## 🛠️ **Performance Optimization**
 
-NPGlue includes built-in tools to diagnose and optimize performance:
+ɴᴘɢʟᴜᴇ includes built-in tools to diagnose and optimize performance:
 
 ### **Model Switching**
 
@@ -157,11 +157,11 @@ GOOSE_MODEL: qwen3
 OLLAMA_HOST: http://localhost:11434
 ```
 
-**Why Ollama provider?** NPGlue supports both OpenAI and Ollama APIs, but Goose's Ollama provider doesn't require API key setup - much simpler!
+**Why Ollama provider?** ɴᴘɢʟᴜᴇ supports both OpenAI and Ollama APIs, but Goose's Ollama provider doesn't require API key setup - much simpler!
 
 ## ⚡ **Zed Integration (WORKING!)**
 
-**NPGlue works as an Ollama provider** (no API key hassles!):
+**ɴᴘɢʟᴜᴇi works as an Ollama provider** (no API key hassles!):
 
 ```json
 {
@@ -211,7 +211,7 @@ curl http://localhost:11434/v1/models
 
 ## 🔌 **API Endpoints**
 
-NPGlue provides **complete API compatibility** with both OpenAI and Ollama:
+ɴᴘɢʟᴜᴇ provides **complete API compatibility** with both OpenAI and Ollama:
 
 **OpenAI API** (for Goose):
 
@@ -245,12 +245,12 @@ NPGlue provides **complete API compatibility** with both OpenAI and Ollama:
 
 ```
 npglue/
-├── install                     # 🌟 Beautiful one-command installer
-├── start_server.sh             # Start the AI server (auto CPU cleanup on exit)
-├── server_production.py        # FastAPI server with dual API compatibility
+├── install                    # 🌟 Beautiful one-command installer
+├── start_server.sh            # Start the AI server (auto CPU cleanup on exit)
+├── server_production.py       # FastAPI server with dual API compatibility
 ├── boost_cpu.sh               # CPU performance optimization
 ├── restore_cpu.sh             # 🔄 Restore CPU to power-saving mode
-├── switch_model.sh             # 🔄 Easy model switching utility
+├── switch_model.sh            # 🔄 Easy model switching utility
 ├── goose_config_example.yaml  # Safe Goose configuration template
 ├── README.md                  # This documentation
 ├── LICENSE                    # License file
@@ -259,7 +259,7 @@ npglue/
     └── qwen3-0.6b-fp16/       # Fast model (1-2GB)
 ```
 
-## 🎯 **Why Choose NPGlue?**
+## 🎯 **Why Choose ɴᴘɢʟᴜᴇ?**
 
 - **One Command Setup**: `./install` does everything beautifully
 - **Model Choice**: Choose between quality (8B) or speed (0.6B)
@@ -309,6 +309,6 @@ python -c "import openvino; print(openvino.Core().available_devices)"
 
 ---
 
-**NPGlue: One command to local AI coding bliss!** 🚀
+**ɴᴘɢʟᴜᴇ: One command to local AI coding bliss!** 🚀
 
 _Get the power of Qwen3's direct, practical responses running locally on your machine in minutes._
