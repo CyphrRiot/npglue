@@ -1,0 +1,26 @@
+{
+  "_comment": "Zed Configuration for Local NPGlue (Multiple Model Support)",
+  "_instructions": "Add these settings to your Zed settings.json file",
+  "_note": "NPGlue serves various models - use generic 'qwen3' name or check ./switch_model.sh for current model",
+  
+  "language_models": {
+    "ollama": {
+      "api_url": "http://localhost:11434",
+      "available_models": [
+        {
+          "name": "qwen3",
+          "display_name": "NPGlue Local (Current Model)",
+          "max_tokens": 4096,
+          "supports_tools": true
+        }
+      ]
+    }
+  },
+  "agent": {
+    "default_model": {
+      "provider": "ollama",
+      "model": "qwen3"
+    }
+  },
+  "_comment_usage": "The 'qwen3' name is generic - NPGlue will serve whatever model is currently active (Qwen3, Llama, Phi-3, DeepSeek, etc.)"
+}
