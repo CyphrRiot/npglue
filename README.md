@@ -146,15 +146,21 @@ The installer provides **safe configuration** that won't overwrite existing sett
 ```bash
 mkdir -p ~/.config/goose
 cp goose_config_example.yaml ~/.config/goose/config.yaml
+# Set the required environment variable:
+export OPENAI_API_KEY="sk-1234567890abcdef1234567890abcdef1234567890abcdef1234"
 ```
 
 **If you HAVE existing Goose config, just add:**
 
 ```yaml
-provider: openai
-model: qwen3
-api_base: http://localhost:11434/v1
-api_key: local-key
+GOOSE_PROVIDER: openai
+GOOSE_MODEL: qwen3
+GOOSE_API_BASE: http://localhost:11434/v1
+```
+
+**And set this environment variable:**
+```bash
+export OPENAI_API_KEY="sk-1234567890abcdef1234567890abcdef1234567890abcdef1234"
 ```
 
 ## ⚡ **Zed Integration (WORKING!)**
