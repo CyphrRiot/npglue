@@ -1,8 +1,8 @@
 # NPGlue - Intel NPU Glue for AI
 
-![Two Things](Image/two%20things.png)
-
 **NPGlue** provides a complete setup for running **Qwen3** models locally using OpenVINO for AI-assisted coding and development with **direct, quality answers**.
+
+![Two Things](Image/two%20things.png)
 
 ## 🚀 **Quick Start**
 
@@ -38,10 +38,10 @@ The installer will ask you to choose your model:
 - **Storage**: 10-15GB free space
 - **CPU**: Intel preferred (excellent OpenVINO optimization)
 - **Shell**: Compatible with bash, zsh, and fish
-- **Hardware acceleration**: 
-  - **Best**: Intel NPU (12th gen+ processors) - 20-30 tokens/sec
-  - **Good**: Intel integrated GPU - 5-10 tokens/sec  
-  - **Basic**: Any CPU - 2-5 tokens/sec (slower but functional)
+- **Hardware acceleration**:
+    - **Best**: Intel NPU (12th gen+ processors) - 20-30 tokens/sec
+    - **Good**: Intel integrated GPU - 5-10 tokens/sec
+    - **Basic**: Any CPU - 2-5 tokens/sec (slower but functional)
 
 ## 📊 **Performance Monitoring**
 
@@ -80,7 +80,6 @@ This helps you:
 
 NPGlue includes built-in tools to diagnose and optimize performance:
 
-
 ### **Model Switching**
 
 ```bash
@@ -95,11 +94,12 @@ Easily switch between models based on your needs:
 **Tip**: If you're getting slow performance (under 15 tok/sec), run the diagnostics tool to identify memory pressure or other issues.
 
 ### **CPU Performance Management**
+
 ```bash
 # Manual CPU optimization
 ./boost_cpu.sh           # Set CPU to performance mode
 
-# Manual CPU restoration  
+# Manual CPU restoration
 ./restore_cpu.sh         # Restore power-saving mode
 
 # Automatic management (recommended)
@@ -110,10 +110,10 @@ Easily switch between models based on your needs:
 
 ## 📊 **Performance Expectations**
 
-| Model               | Size   | Memory   | Speed (NPU)  | Speed (iGPU) | Speed (CPU)  | Best For                              |
-| ------------------- | ------ | -------- | ------------ | ------------ | ------------ | ------------------------------------- |
-| **Qwen3-8B-INT8**   | ~6-8GB | 8GB+ RAM | 20-30 tok/s  | 5-10 tok/s   | 2-5 tok/s    | Complex coding, detailed explanations |
-| **Qwen3-0.6B-FP16** | ~1-2GB | 2GB+ RAM | 25-40 tok/s  | 8-15 tok/s   | 4-8 tok/s    | Quick answers, simple tasks           |
+| Model               | Size   | Memory   | Speed (NPU) | Speed (iGPU) | Speed (CPU) | Best For                              |
+| ------------------- | ------ | -------- | ----------- | ------------ | ----------- | ------------------------------------- |
+| **Qwen3-8B-INT8**   | ~6-8GB | 8GB+ RAM | 20-30 tok/s | 5-10 tok/s   | 2-5 tok/s   | Complex coding, detailed explanations |
+| **Qwen3-0.6B-FP16** | ~1-2GB | 2GB+ RAM | 25-40 tok/s | 8-15 tok/s   | 4-8 tok/s   | Quick answers, simple tasks           |
 
 ## 🛠️ **What the Installer Does**
 
