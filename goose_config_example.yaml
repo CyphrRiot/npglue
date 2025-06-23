@@ -6,7 +6,7 @@
 provider: openai  # Use OpenAI-compatible API
 model: qwen3  # NPGlue serves Qwen3 models
 api_base: http://localhost:11434/v1  # NPGlue server endpoint
-api_key: local-key  # Dummy key for local server
+api_key: sk-1234567890abcdef1234567890abcdef1234567890abcdef1234  # Fake OpenAI-formatted key for local server
 
 # System prompt for development assistant
 system_prompt: |
