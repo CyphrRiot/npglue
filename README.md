@@ -1,6 +1,6 @@
-# NPGlue - Intel NPU Ollama Replacement!
+# ɴᴘɢʟᴜᴇ - Intel NPU Ollama Replacement!
 
-**NPGlue** provides a complete setup for running **Qwen3** models locally using OpenVINO for AI-assisted coding and development with **direct, quality answers**.
+**ɴᴘɢʟᴜᴇ** provides a complete setup for running **Qwen3** models locally using OpenVINO for AI-assisted coding and development with **direct, quality answers**.
 
 ![I am a Pickle](Image/pickle_rick.png)
 
@@ -45,7 +45,7 @@ The installer will ask you to choose your model:
 
 ## 📊 **Performance Monitoring**
 
-NPGlue automatically displays performance metrics with every response:
+ɴᴘɢʟᴜᴇ automatically displays performance metrics with every response:
 
 ```
 What is the capital of France?
