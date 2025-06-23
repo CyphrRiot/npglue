@@ -2,7 +2,7 @@
 
 **NPGlue** provides a complete setup for running **Qwen3** models locally using OpenVINO for AI-assisted coding and development with **direct, quality answers**.
 
-![Two Things](Image/pickle_rick.png)
+![I am a Pickle](Image/pickle_rick.png)
 
 ## 🚀 **Quick Start**
 
