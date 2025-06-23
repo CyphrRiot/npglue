@@ -130,7 +130,7 @@ ollama run qwen2.5:7b    # 8-15 tokens/sec
 ```bash
 ✅ Intel Core Ultra (12th gen+)   - Intel NPU
 ✅ AMD Ryzen AI (8000 series+)    - AMD XDNA NPU  
-✅ Qualcomm Snapdragon X Elite   - Hexagon NPU
+✅ Qualcomm Snapdragon X Elite    - Hexagon NPU
 ❌ Older Intel/AMD processors     - No NPU
 ```
 
@@ -138,8 +138,8 @@ ollama run qwen2.5:7b    # 8-15 tokens/sec
 ```bash
 ✅ NVIDIA RTX 20/30/40 series    - CUDA acceleration
 ✅ AMD RX 6000/7000 series       - ROCm acceleration  
-✅ Apple M1/M2/M3                 - Metal acceleration
-❌ Intel integrated graphics      - Limited support
+✅ Apple M1/M2/M3                - Metal acceleration
+❌ Intel integrated graphics     - Limited support
 ```
 
 #### **🔥 The Future is NPU:**
