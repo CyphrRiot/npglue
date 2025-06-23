@@ -1,19 +1,17 @@
-# Goose Configuration for Local DeepSeek-R1 INT4-AWQ OpenVINO
+# Goose Configuration for Local NPGlue (Qwen3 + OpenVINO)
 # Place this in ~/.config/goose/config.yaml ONLY if you don't have existing config
 # See installer instructions for safe configuration
 
-# Local DeepSeek-R1 INT4-AWQ OpenVINO Configuration  
-GOOSE_MODEL: deepseek-r1-openvino
-GOOSE_PROVIDER: openai  # Use OpenAI-compatible API
-GOOSE_API_BASE: http://localhost:8000/v1  # Local server endpoint
-GOOSE_API_KEY: local-key  # Dummy key for local server
-GOOSE_MODE: smart_approve
-GOOSE_CLI_MIN_PRIORITY: 0.8
+# Local Qwen3 OpenVINO Configuration via NPGlue
+provider: openai  # Use OpenAI-compatible API
+model: qwen3  # NPGlue serves Qwen3 models
+api_base: http://localhost:11434/v1  # NPGlue server endpoint
+api_key: local-key  # Dummy key for local server
 
-# System prompt optimized for DeepSeek-R1's thinking capabilities
-GOOSE_SYSTEM_PROMPT: |
-  You are DeepSeek-R1, an advanced reasoning model. Provide clear, well-reasoned code and explanations.
-  Think through problems step by step and focus on practical, efficient solutions.
+# System prompt for development assistant
+system_prompt: |
+  You are a helpful AI development assistant. Provide clear, practical solutions and direct answers.
+  Focus on actionable code and efficient problem-solving.
 
 # Extensions configuration
 extensions:
@@ -27,9 +25,5 @@ extensions:
 
 # Performance and reliability settings
 request_timeout: 60  # Extended timeout for local inference
-max_tokens: 150      # Limit response length for faster generation
+max_tokens: 1000     # Allow longer responses (NPGlue supports up to 4096)
 temperature: 0.7     # Moderate creativity for coding tasks
-
-# Optional: Ollama fallback if you have it installed
-# OLLAMA_HOST: localhost
-# OLLAMA_MODEL: qwen3:8b
