@@ -146,22 +146,18 @@ The installer provides **safe configuration** that won't overwrite existing sett
 ```bash
 mkdir -p ~/.config/goose
 cp goose_config_example.yaml ~/.config/goose/config.yaml
-# Set the required environment variable:
-export OPENAI_API_KEY="sk-1234567890abcdef1234567890abcdef1234567890abcdef1234"
+# No API key needed! Uses Ollama provider which is simpler.
 ```
 
 **If you HAVE existing Goose config, just add:**
 
 ```yaml
-GOOSE_PROVIDER: openai
+GOOSE_PROVIDER: ollama
 GOOSE_MODEL: qwen3
-GOOSE_API_BASE: http://localhost:11434/v1
+OLLAMA_HOST: http://localhost:11434
 ```
 
-**And set this environment variable:**
-```bash
-export OPENAI_API_KEY="sk-1234567890abcdef1234567890abcdef1234567890abcdef1234"
-```
+**Why Ollama provider?** NPGlue supports both OpenAI and Ollama APIs, but Goose's Ollama provider doesn't require API key setup - much simpler!
 
 ## ⚡ **Zed Integration (WORKING!)**
 

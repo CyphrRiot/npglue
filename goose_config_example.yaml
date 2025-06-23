@@ -2,14 +2,11 @@
 # Place this in ~/.config/goose/config.yaml ONLY if you don't have existing config
 # See installer instructions for safe configuration
 
-# IMPORTANT: Set this environment variable before using Goose:
-# export OPENAI_API_KEY="sk-1234567890abcdef1234567890abcdef1234567890abcdef1234"
-# (Goose requires this in keychain/env, not in config file)
-
-# Local Qwen3 OpenVINO Configuration via NPGlue
-GOOSE_PROVIDER: openai  # Use OpenAI-compatible API
+# Use Ollama provider - NO API KEY NEEDED!
+# NPGlue supports both OpenAI and Ollama APIs, but Ollama provider is simpler
+GOOSE_PROVIDER: ollama
 GOOSE_MODEL: qwen3  # NPGlue serves Qwen3 models
-GOOSE_API_BASE: http://localhost:11434/v1  # NPGlue server endpoint
+OLLAMA_HOST: http://localhost:11434  # NPGlue server endpoint
 
 # System prompt for development assistant
 GOOSE_SYSTEM_PROMPT: |
