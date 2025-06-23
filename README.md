@@ -25,7 +25,7 @@ The installer will ask you to choose your model:
 - **20-50+ tokens/sec**: Fast local inference with memory efficiency
 - **Performance Display**: Every response shows completion time and token rate
 - **Model Switching**: Easy switching between models based on your needs
-- **Direct Answers**: No more rambling - get "4" when you ask "What is 2+2"
+- **Direct Answers**: No rambling - get concise, actionable responses
 - **Zed Compatible**: Works as Ollama provider (no API key hassles!)
 - **Full Ollama API**: Complete compatibility with Ollama ecosystem
 - **Dual API Support**: Both OpenAI and Ollama compatible endpoints
