@@ -3,15 +3,19 @@
 # See installer instructions for safe configuration
 
 # Local Qwen3 OpenVINO Configuration via NPGlue
-provider: openai  # Use OpenAI-compatible API
-model: qwen3  # NPGlue serves Qwen3 models
-api_base: http://localhost:11434/v1  # NPGlue server endpoint
-api_key: sk-1234567890abcdef1234567890abcdef1234567890abcdef1234  # Fake OpenAI-formatted key for local server
+GOOSE_PROVIDER: openai  # Use OpenAI-compatible API
+GOOSE_MODEL: qwen3  # NPGlue serves Qwen3 models
+GOOSE_API_BASE: http://localhost:11434/v1  # NPGlue server endpoint
+OPENAI_API_KEY: sk-1234567890abcdef1234567890abcdef1234567890abcdef1234  # Fake OpenAI-formatted key
 
 # System prompt for development assistant
-system_prompt: |
+GOOSE_SYSTEM_PROMPT: |
   You are a helpful AI development assistant. Provide clear, practical solutions and direct answers.
   Focus on actionable code and efficient problem-solving.
+
+# Performance settings
+GOOSE_MODE: approve
+GOOSE_CLI_MIN_PRIORITY: 0.8
 
 # Extensions configuration
 extensions:
@@ -22,8 +26,3 @@ extensions:
     name: developer
     timeout: 300
     type: builtin
-
-# Performance and reliability settings
-request_timeout: 60  # Extended timeout for local inference
-max_tokens: 1000     # Allow longer responses (NPGlue supports up to 4096)
-temperature: 0.7     # Moderate creativity for coding tasks
